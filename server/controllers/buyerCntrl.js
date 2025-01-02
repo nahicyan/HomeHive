@@ -78,8 +78,8 @@ export const makeOffer = asyncHandler(async (req, res) => {
     }
 });
 
-export const getAllOffers = asyncHandler(async (req, res) => {
-    const { propertyId } = req.body;
+export const getOffersOnProperty = asyncHandler(async (req, res) => {
+    const { propertyId } = req.params;
 
     if (!propertyId) {
         res.status(400).json({ message: "Property ID is required." });
@@ -94,40 +94,93 @@ export const getAllOffers = asyncHandler(async (req, res) => {
                 lastName: true,
                 email: true,
                 phone: true,
-                offers: true // Retrieve all offers for each buyer
+                offers: true
             }
         });
 
-        // Filter offers for the specified property ID
-        const filteredOffers = buyers
-            .map(buyer => {
-                const relevantOffers = (buyer.offers || []).filter(offer => offer.propertyId === propertyId);
-                return relevantOffers.length > 0
-                    ? {
-                          firstName: buyer.firstName,
-                          lastName: buyer.lastName,
-                          email: buyer.email,
-                          phone: buyer.phone,
-                          offers: relevantOffers
-                      }
-                    : null;
-            })
-            .filter(Boolean); // Remove null entries
-
-        if (filteredOffers.length === 0) {
-            res.status(404).json({ message: "No offers found for this property." });
-            return;
-        }
+        // Filter and aggregate offers for the specific propertyId
+        const offers = buyers
+            .flatMap((buyer) => {
+                const buyerOffers = Array.isArray(buyer.offers) ? buyer.offers : [];
+                return buyerOffers
+                    .filter((offer) => offer.propertyId === propertyId)
+                    .map((offer) => ({
+                        ...offer,
+                        buyer: {
+                            firstName: buyer.firstName,
+                            lastName: buyer.lastName,
+                            email: buyer.email,
+                            phone: buyer.phone
+                        }
+                    }));
+            });
 
         res.status(200).json({
-            message: "Offers retrieved successfully.",
-            offers: filteredOffers
+            propertyId,
+            totalOffers: offers.length,
+            offers
         });
     } catch (err) {
         console.error(err);
         res.status(500).json({
-            message: "An error occurred while retrieving offers.",
+            message: "An error occurred while fetching offers for the property.",
             error: err.message
         });
     }
 });
+
+
+
+export const getOffersByBuyer = asyncHandler(async (req, res) => {
+    const { email, phone } = req.query;
+
+    if (!email && !phone) {
+        res.status(400).json({ message: "At least one of email or phone is required." });
+        return;
+    }
+
+    try {
+        // Build dynamic query conditions
+        const whereConditions = [];
+        if (email) whereConditions.push({ email });
+        if (phone) whereConditions.push({ phone });
+
+        // Find the buyer using dynamic conditions
+        const buyer = await prisma.buyer.findFirst({
+            where: {
+                OR: whereConditions
+            },
+            select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+                phone: true,
+                offers: true
+            }
+        });
+
+        if (!buyer) {
+            res.status(404).json({ message: "Buyer not found with the provided email or phone." });
+            return;
+        }
+
+        res.status(200).json({
+            buyer: {
+                firstName: buyer.firstName,
+                lastName: buyer.lastName,
+                email: buyer.email,
+                phone: buyer.phone
+            },
+            totalOffers: buyer.offers.length,
+            offers: buyer.offers
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: "An error occurred while fetching offers for the buyer.",
+            error: err.message
+        });
+    }
+});
+
+
