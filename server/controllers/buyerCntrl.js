@@ -10,8 +10,8 @@ export const makeOffer = asyncHandler(async (req, res) => {
     }
 
     try {
-        // Find existing buyer
-        const existingBuyer = await prisma.buyer.findFirst({
+        // Find or create buyer
+        let buyer = await prisma.buyer.findFirst({
             where: {
                 OR: [
                     { email },
@@ -20,55 +20,32 @@ export const makeOffer = asyncHandler(async (req, res) => {
             }
         });
 
-        if (existingBuyer) {
-            // Ensure offers is an array
-            const existingOffers = Array.isArray(existingBuyer.offers) ? existingBuyer.offers : [];
-
-            // Check if the buyer has already made an offer on the property
-            const existingOffer = existingOffers.find((offer) => offer.propertyId === propertyId);
-
-            if (existingOffer) {
-                res.status(400).json({
-                    message: "You already made an offer. Would you like to change your previous offer?",
-                    existingOffer
-                });
-                return;
-            }
-
-            // Append the new offer to the existing offers array
-            const updatedBuyer = await prisma.buyer.update({
-                where: { id: existingBuyer.id },
-                data: {
-                    firstName,
-                    lastName,
-                    offers: {
-                        set: [...existingOffers, { propertyId, offeredPrice }] // Append new offer
-                    }
-                }
-            });
-
-            res.status(200).json({
-                message: "Offer updated successfully.",
-                buyer: updatedBuyer
-            });
-        } else {
-            // Create a new buyer with the initial offer
-            const newBuyer = await prisma.buyer.create({
+        if (!buyer) {
+            buyer = await prisma.buyer.create({
                 data: {
                     email,
                     phone,
                     buyerType,
                     firstName,
-                    lastName,
-                    offers: [{ propertyId, offeredPrice }]
+                    lastName
                 }
             });
-
-            res.status(201).json({
-                message: "Offer created successfully.",
-                buyer: newBuyer
-            });
         }
+
+        // Create a new offer
+        const newOffer = await prisma.offer.create({
+            data: {
+                propertyId,
+                offeredPrice,
+                buyerId: buyer.id,
+                timestamp: new Date()
+            }
+        });
+
+        res.status(201).json({
+            message: "Offer created successfully.",
+            offer: newOffer
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({
@@ -77,6 +54,8 @@ export const makeOffer = asyncHandler(async (req, res) => {
         });
     }
 });
+
+
 
 export const getOffersOnProperty = asyncHandler(async (req, res) => {
     const { propertyId } = req.params;
@@ -87,33 +66,23 @@ export const getOffersOnProperty = asyncHandler(async (req, res) => {
     }
 
     try {
-        // Fetch all buyers
-        const buyers = await prisma.buyer.findMany({
-            select: {
-                firstName: true,
-                lastName: true,
-                email: true,
-                phone: true,
-                offers: true
+        // Fetch all offers for the property, including buyer details
+        const offers = await prisma.offer.findMany({
+            where: { propertyId },
+            include: {
+                buyer: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phone: true
+                    }
+                }
+            },
+            orderBy: {
+                timestamp: "desc" // Change to "asc" for oldest first
             }
         });
-
-        // Filter and aggregate offers for the specific propertyId
-        const offers = buyers
-            .flatMap((buyer) => {
-                const buyerOffers = Array.isArray(buyer.offers) ? buyer.offers : [];
-                return buyerOffers
-                    .filter((offer) => offer.propertyId === propertyId)
-                    .map((offer) => ({
-                        ...offer,
-                        buyer: {
-                            firstName: buyer.firstName,
-                            lastName: buyer.lastName,
-                            email: buyer.email,
-                            phone: buyer.phone
-                        }
-                    }));
-            });
 
         res.status(200).json({
             propertyId,
@@ -130,7 +99,6 @@ export const getOffersOnProperty = asyncHandler(async (req, res) => {
 });
 
 
-
 export const getOffersByBuyer = asyncHandler(async (req, res) => {
     const { email, phone } = req.query;
 
@@ -140,22 +108,13 @@ export const getOffersByBuyer = asyncHandler(async (req, res) => {
     }
 
     try {
-        // Build dynamic query conditions
-        const whereConditions = [];
-        if (email) whereConditions.push({ email });
-        if (phone) whereConditions.push({ phone });
-
-        // Find the buyer using dynamic conditions
+        // Find buyer by email or phone
         const buyer = await prisma.buyer.findFirst({
             where: {
-                OR: whereConditions
-            },
-            select: {
-                firstName: true,
-                lastName: true,
-                email: true,
-                phone: true,
-                offers: true
+                OR: [
+                    { email },
+                    { phone }
+                ]
             }
         });
 
@@ -164,6 +123,14 @@ export const getOffersByBuyer = asyncHandler(async (req, res) => {
             return;
         }
 
+        // Fetch all offers by the buyer
+        const offers = await prisma.offer.findMany({
+            where: { buyerId: buyer.id },
+            orderBy: {
+                timestamp: "desc" // Change to "asc" for oldest first
+            }
+        });
+
         res.status(200).json({
             buyer: {
                 firstName: buyer.firstName,
@@ -171,8 +138,8 @@ export const getOffersByBuyer = asyncHandler(async (req, res) => {
                 email: buyer.email,
                 phone: buyer.phone
             },
-            totalOffers: buyer.offers.length,
-            offers: buyer.offers
+            totalOffers: offers.length,
+            offers
         });
     } catch (err) {
         console.error(err);
@@ -183,6 +150,7 @@ export const getOffersByBuyer = asyncHandler(async (req, res) => {
     }
 });
 
-// Add Another functions To 
+
+
 
 
