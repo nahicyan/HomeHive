@@ -1,0 +1,44 @@
+.inner-container{
+    gap: 1.5rem;
+    background:#ff8f27;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 6px solid #ffef5e;
+    text-align: center;
+}
+
+.inner-container .primaryText{
+    color:#fff;
+    font-weight: 600;
+
+}
+
+.inner-container .secondaryText {
+    color: rgba(255,255,255,0.5);
+}
+
+
+.search-bar{
+    background-color: #fff;
+    border-radius: 5px;
+    border: 3px solid rgba(255,255,255,0.375);
+    padding: 0.5rem 1rem;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.search-bar> input{
+    border: none;
+    outline: none;
+    flex: 1; 
+    padding-right: 5px;
+}
+
+.whiteText{
+ color: #FDFDFF
+}
+
+.mailIcon{
+    padding-right: 5px;
+}
+
