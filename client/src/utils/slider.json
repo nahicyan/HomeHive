@@ -1,38 +1,45 @@
 [
   {
-    "name": "Aliva Priva Jardin",
-    "price": "47,043",
-    "detail": "Jakarta Garden City Street, Cakung. Pulo Gadung, Jakarta Timur, DKI Jakarta",
-    "image": "./r1.png"
+    "name": "Sunny Acres Ranch",
+    "price": "150,000",
+    "detail": "123 Sunshine Road, Austin, TX 78701",
+    "image": "./land1.jpg"
   },
   {
-    "name": "Asatti Garden City",
-    "price": "66,353",
-    "detail": "Pahlawan Street XVII No.215, Cinangka, Sawangan, Depok, Jawa Barat",
-    "image": "./r2.png"
+    "name": "Evergreen Valley Estate",
+    "price": "250,000",
+    "detail": "456 Forest Lane, Denver, CO 80202",
+    "image": "./land2.jpg"
   },
   {
-    "name": "Citralan Puri Serang",
-    "price": "35,853",
-    "detail": "Ruko Puri Indah Residence Block A7, Lingkar Street, Ciracas, Serang, Banten",
-    "image": "./r3.png"
+    "name": "Willow Creek Meadow",
+    "price": "75,000",
+    "detail": "789 Willow Street, Lexington, KY 40507",
+    "image": "./land3.jpg"
   },
   {
-    "name": "Aliva Priva Jardin",
-    "price": "47,043",
-    "detail": "Jakarta Garden City Street, Cakung. Pulo Gadung, Jakarta Timur, DKI Jakarta",
-    "image": "./r1.png"
+    "name": "Blue Ridge Hills",
+    "price": "320,000",
+    "detail": "321 Mountain View Drive, Asheville, NC 28801",
+    "image": "./land4.jpg"
   },
   {
-    "name": "Asatti Garden City",
-    "price": "66,353",
-    "detail": "Pahlawan Street XVII No.215, Cinangka, Sawangan, Depok, Jawa Barat",
-    "image": "./r2.png"
+    "name": "Lakeside Retreat",
+    "price": "200,000",
+    "detail": "987 Lakeshore Avenue, Madison, WI 53703",
+    "image": "./land5.jpg"
   },
   {
-    "name": "Citralan Puri Serang",
-    "price": "35,853",
-    "detail": "Ruko Puri Indah Residence Block A7, Lingkar Street, Ciracas, Serang, Banten",
-    "image": "./r3.png"
+    "name": "Golden Prairie Fields",
+    "price": "140,000",
+    "detail": "654 Prairie Road, Wichita, KS 67202",
+    "image": "./land6.jpg"
+  },
+  {
+    "name": "Pinewood Forest",
+    "price": "180,000",
+    "detail": "543 Pine Street, Portland, OR 97201",
+    "image": "./land7.jpg"
   }
 ]
+                          

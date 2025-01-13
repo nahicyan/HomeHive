@@ -60,7 +60,6 @@ const Hero = () => {
         <div className="hero-right">
           <div className="image-container">
             <img src="./banner.jpg" alt="Landers Banner" />
-            {/* 3224 */}
           </div>
         </div>
       </div>
