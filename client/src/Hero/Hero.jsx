@@ -18,11 +18,11 @@ const Hero = () => {
             </h1>
           </div>
           <div className="flexColStart hero-des">
-            <span>
+            <span className="secondaryText">
               Our mission is to simplify the land-buying
               <br /> experience by offering direct sales and expert guidance
             </span>
-            <span>
+            <span className="secondaryText">
               Whether you're seeking the perfect plot to build your dream home
               <br /> or a lucrative investment opportunity, <br /> we provide
               the tools and expertise to make it happen
