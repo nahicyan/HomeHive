@@ -12,13 +12,14 @@ import { MdOutlineArrowDropDown } from "react-icons/md";
 import "./Why.css";
 import data from "../../utils/accordion";
 
-
 const Why = () => {
+  const [expandedIndex, setExpandedIndex] = useState(null); // Centralized state
+
   return (
     <section id="Why" className="w-wrapper">
       <div className="paddings innerWidth flexCenter v-container">
         {/* left side */}
-        <div className="wleft">
+        <div className="v-left">
           <div className="image-container">
             <img src="./why.jpg" alt="" />
           </div>
@@ -28,12 +29,14 @@ const Why = () => {
         <div className="flexColStart v-right">
           <span className="orangeText">Why Choose Landers Investment?</span>
 
-          <span className="primaryText">Making land ownership simple, transparent, and reliable</span>
+          <span className="primaryText">
+            Making land ownership simple, transparent, and reliable
+          </span>
 
           <span className="secondaryText">
-            We always ready to help by providijng the best services for you.
+            We are always ready to help by providing the best services for you.
             <br />
-            We beleive a good blace to live can make your life better
+            We believe a good place to live can make your life better.
           </span>
 
           <Accordion
@@ -42,25 +45,21 @@ const Why = () => {
             preExpanded={[0]}
           >
             {data.map((item, i) => {
-              const [className, setClassName] = useState(null);
+              const isExpanded = expandedIndex === i;
+
               return (
-                <AccordionItem className={`accordionItem ${className}`} uuid={i} key={i}>
+                <AccordionItem
+                  className={`accordionItem ${isExpanded ? "expanded" : "collapsed"}`}
+                  uuid={i}
+                  key={i}
+                >
                   <AccordionItemHeading>
-                    <AccordionItemButton className="flexCenter accordionButton ">
-                        {/* just for getting state of item */}
-                      <AccordionItemState>
-                        {({ expanded }) =>
-                          expanded
-                            ? setClassName("expanded")
-                            : setClassName("collapsed")
-                        }
-                      </AccordionItemState>
+                    <AccordionItemButton
+                      className="flexCenter accordionButton"
+                      onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                    >
                       <div className="flexCenter icon">{item.icon}</div>
-                      <span
-                        className="primaryText"
-                      >
-                        {item.heading}
-                      </span>
+                      <span className="primaryText">{item.heading}</span>
                       <div className="flexCenter icon">
                         <MdOutlineArrowDropDown size={20} />
                       </div>
@@ -79,4 +78,4 @@ const Why = () => {
   );
 };
 
-export default Why; 
+export default Why;

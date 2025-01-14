@@ -1,9 +1,9 @@
 .inner-container{
     gap: 1.5rem;
-    background:#ff8f27;
+    background:#002647;
     padding: 2rem;
     border-radius: 10px;
-    border: 6px solid #ffef5e;
+    border: 6px solid #1f3e72;
     text-align: center;
 }
 
@@ -18,16 +18,18 @@
 }
 
 
-.search-bar{
+.search-bar2{
     background-color: #fff;
+    gap: 1rem;
     border-radius: 5px;
     border: 3px solid rgba(255,255,255,0.375);
     padding: 0.5rem 1rem;
     justify-content: space-between;
-    width: 100%;
+    width: 50%;
 }
 
-.search-bar> input{
+.search-bar2> input{
+
     border: none;
     outline: none;
     flex: 1; 
