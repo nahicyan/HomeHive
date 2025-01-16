@@ -4,6 +4,7 @@ import "swiper/css";
 import "./Lands.css";
 import data from "../../utils/slider.json";
 import { sliderSettings } from "../../utils/common";
+import PropertyCard from "../PropertyCard/PropertyCard";
 
 export const Lands = () => {
   return (
@@ -18,15 +19,7 @@ export const Lands = () => {
         <Swiper {...sliderSettings}>
           {data.map((card, i) => (
             <SwiperSlide key={i}>
-              <div className="flexColStart l-card">
-                <img src={card.image} alt="Land" />
-                <span className="secondaryText l-price">
-                  <span style={{ color: "#FF8000" }}>$</span>
-                  <span>{card.price}</span>
-                </span>
-                <span className="primaryText">{card.name}</span>
-                <span className="secondaryText">{card.detail}</span>
-              </div>
+              <PropertyCard card={card}/>
             </SwiperSlide>
           ))}
           <SliderButtons />
@@ -42,8 +35,8 @@ const SliderButtons = () => {
   const swiper = useSwiper();
   return (
     <div className="flexCenter l-buttons">
-      <button onClick={()=>swiper.slidePrev()}>&lt;</button>
-      <button onClick={()=>swiper.slideNext()}>&gt;</button>
+      <button onClick={() => swiper.slidePrev()}>&lt;</button>
+      <button onClick={() => swiper.slideNext()}>&gt;</button>
     </div>
   );
 };

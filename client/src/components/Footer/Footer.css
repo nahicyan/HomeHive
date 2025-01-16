@@ -1,5 +1,6 @@
 .f-container{
     justify-content: space-between;
+    border-top: .5px solid rgba(0,0,0,0.15);
 }
 
 .f-left{
@@ -19,6 +20,10 @@
 
     .f-container>div{
         align-items: center;
+    }
+
+    .f-right{
+        justify-content: center;
     }
     
 }

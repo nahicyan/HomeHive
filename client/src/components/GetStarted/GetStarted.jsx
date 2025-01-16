@@ -11,8 +11,8 @@ export const GetStarted = () => {
           <span className="primaryText">
             Be The First to Know About New Listings
           </span>
-          <span className="whiteText orangeText">
-            Enter Your Email To Receive Updates On The Latest Properties & Unbeatable Deals
+          <span className="secondaryText">
+            Receive Updates On The Latest Properties & Unbeatable Deals
           </span>
           <button className="button"><a href="http://buy.landersinvestment.com/subscribe/">Get Started</a></button>
         </div>

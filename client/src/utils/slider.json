@@ -1,19 +1,19 @@
 [
   {
     "name": "Sunny Acres Ranch",
-    "price": "150,000",
+    "askingPrice": "150,000",
     "detail": "123 Sunshine Road, Austin, TX 78701",
     "image": "./land1.jpg"
   },
   {
     "name": "Evergreen Valley Estate",
-    "price": "250,000",
+    "askingPrice": "250,000",
     "detail": "456 Forest Lane, Denver, CO 80202",
     "image": "./land2.jpg"
   },
   {
     "name": "Willow Creek Meadow",
-    "price": "75,000",
+    "askingPrice": "75,000",
     "detail": "789 Willow Street, Lexington, KY 40507",
     "image": "./land3.jpg"
   },

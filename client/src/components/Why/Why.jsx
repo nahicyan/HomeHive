@@ -49,7 +49,9 @@ const Why = () => {
 
               return (
                 <AccordionItem
-                  className={`accordionItem ${isExpanded ? "expanded" : "collapsed"}`}
+                  className={`accordionItem ${
+                    isExpanded ? "expanded" : "collapsed"
+                  }`}
                   uuid={i}
                   key={i}
                 >
