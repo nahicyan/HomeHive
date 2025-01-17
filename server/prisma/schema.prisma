@@ -81,5 +81,5 @@ enum BuyerType {
     Agent
     Investor
     Wholesaler
-}
+} 
 
