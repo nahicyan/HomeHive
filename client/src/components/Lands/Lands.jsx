@@ -4,9 +4,33 @@ import "swiper/css";
 import "./Lands.css";
 import data from "../../utils/slider.json";
 import { sliderSettings } from "../../utils/common";
-import PropertyCard from "../PropertyCard/PropertyCard";
+import PropertyCard from "../../components/PropertyCard/PropertyCard";
+import useProperties from '../../components/hooks/useProperties'
+import {PuffLoader} from "react-spinners"
 
 export const Lands = () => {
+  const { data, isError, isLoading } = useProperties()
+  if(isError){
+    return(
+        <div className="wrapper">
+            <span>Error While Fetching Data</span>
+        </div>
+    )
+}
+if(isLoading){
+    return(
+        <div className="wrapper flexCenter" style={{height:"60vh"}}>
+        <PuffLoader
+        height="80"
+        width="80"
+        radius={1}
+        color="#4066FF"
+        aria-label='puff-loading'
+        />
+        </div>
+    )
+}
+
   return (
     <section className="l-wrapper">
       <div className="paddings innerWidth l-container">
@@ -17,7 +41,7 @@ export const Lands = () => {
           </span>
         </div>
         <Swiper {...sliderSettings}>
-          {data.map((card, i) => (
+          {data.slice(0,8).map((card, i) => (
             <SwiperSlide key={i}>
               <PropertyCard card={card}/>
             </SwiperSlide>
