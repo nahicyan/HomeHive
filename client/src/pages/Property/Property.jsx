@@ -24,6 +24,10 @@ import { FaMagnifyingGlassLocation } from "react-icons/fa6";
 import { UserContext } from "../../utils/UserContext";
 import { transformResidencyData } from "../../utils/residencyValidation";
 
+// 1) Retrieve server URL from environment variable, fallback to local
+const serverURL = import.meta.env.VITE_SERVER_URL;
+
+
 const Property = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -154,7 +158,6 @@ const Property = () => {
           <AiFillStar size={24} color="#ffB000" />
         </div>
 
-        {/* If editing and admin, input for image; else show image */}
         {editMode && isAdmin ? (
           <div style={{ marginBottom: "1rem" }}>
             <label>Image URL: </label>
@@ -165,8 +168,14 @@ const Property = () => {
             />
           </div>
         ) : (
-          <img src={`/${propertyData.image}`} alt="home" />
+          // 2) Build the final URL using serverURL
+          <img
+            src={`${serverURL}/${propertyData.image}`}
+            alt="Property"
+            style={{ maxWidth: "100%" }}
+          />
         )}
+
 
         {/* If admin, show 'Edit' button to toggle edit mode (unless already editing) */}
         {isAdmin && !editMode && (

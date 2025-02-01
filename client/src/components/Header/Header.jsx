@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import "./Header.css";
 import { BiMenuAltRight } from "react-icons/bi";
 import OutsideClickHandler from "react-outside-click-handler";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { loginUser } from "../../utils/api";
 import { UserContext } from "../../utils/UserContext";
 
@@ -25,17 +25,19 @@ const deleteCookie = (name) => {
 };
 
 const Header = () => {
+  const navigate = useNavigate();
+
   const [menuOpened, setMenuOpened] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // 1) Access the user context instead of local component state
+  // 1) Access user context
   const { currentUser, setCurrentUser } = useContext(UserContext);
 
-  // For the login form
+  // Login form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Load user from cookie on mount and update the context
+  // Load user from cookie on mount
   useEffect(() => {
     const userCookie = getCookie("loggedInUser");
     if (userCookie) {
@@ -48,7 +50,7 @@ const Header = () => {
     }
   }, [setCurrentUser]);
 
-  // Helper to style the mobile menu
+  // Style for mobile menu
   const getMenuStyles = (menuOpen) => {
     if (document.documentElement.clientWidth <= 800) {
       return { right: menuOpen ? "0" : "-100%" };
@@ -56,7 +58,7 @@ const Header = () => {
     return {};
   };
 
-  // Handle login submission
+  // Login
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -64,25 +66,22 @@ const Header = () => {
       console.log("Login Success:", data);
 
       if (data.user) {
-        // Update context
         setCurrentUser(data.user);
-        // Also store user in a cookie
         setCookie("loggedInUser", encodeURIComponent(JSON.stringify(data.user)));
       }
-
       setShowLoginModal(false);
     } catch (err) {
       console.error("Login Error:", err);
     }
   };
 
-  // Handle logout: clear user context and remove cookie
+  // Logout
   const handleLogout = () => {
     setCurrentUser(null);
     deleteCookie("loggedInUser");
   };
 
-  // Helper to determine button label
+  // Button label
   const getButtonLabel = () => {
     if (!currentUser) return "Login";
     if (currentUser.role === "ADMIN") {
@@ -105,7 +104,7 @@ const Header = () => {
             <NavLink to="/About Us">About</NavLink>
             <NavLink to="/Contact Us">Contact</NavLink>
 
-            {/* If user not logged in, show "Login" button; if logged in, show name + logout */}
+            {/* If user not logged in, show Login; otherwise show user info */}
             {!currentUser ? (
               <button className="button" onClick={() => setShowLoginModal(true)}>
                 {getButtonLabel()}
@@ -113,6 +112,15 @@ const Header = () => {
             ) : (
               <>
                 <button className="button">{getButtonLabel()}</button>
+                {/* If admin, show Add Property button */}
+                {currentUser.role === "ADMIN" && (
+                  <button
+                    className="button"
+                    onClick={() => navigate("/add-property")}
+                  >
+                    Add Property
+                  </button>
+                )}
                 <button className="button" onClick={handleLogout}>
                   Logout
                 </button>
@@ -121,12 +129,14 @@ const Header = () => {
           </div>
         </OutsideClickHandler>
 
-        <div className="menu-icon" onClick={() => setMenuOpened((prev) => !prev)}>
+        <div
+          className="menu-icon"
+          onClick={() => setMenuOpened((prev) => !prev)}
+        >
           <BiMenuAltRight size={30} />
         </div>
       </div>
 
-      {/* Login Modal */}
       {showLoginModal && (
         <div className="modalOverlay">
           <div className="modalContent">
