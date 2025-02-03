@@ -5,6 +5,7 @@ import OutsideClickHandler from "react-outside-click-handler";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { loginUser } from "../../utils/api";
 import { UserContext } from "../../utils/UserContext";
+import LoginModal from "../LoginModal/LoginModal"; // Adjust the path as necessary
 
 // Utility to get and set cookies
 const setCookie = (name, value, days = 7) => {
@@ -26,16 +27,10 @@ const deleteCookie = (name) => {
 
 const Header = () => {
   const navigate = useNavigate();
+  const { currentUser, setCurrentUser } = useContext(UserContext);
 
   const [menuOpened, setMenuOpened] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-
-  // 1) Access user context
-  const { currentUser, setCurrentUser } = useContext(UserContext);
-
-  // Login form state
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   // Load user from cookie on mount
   useEffect(() => {
@@ -58,13 +53,11 @@ const Header = () => {
     return {};
   };
 
-  // Login
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  // Callback function to handle login data from the modal
+  const handleLoginData = async ({ email, password }) => {
     try {
       const data = await loginUser({ email, password });
       console.log("Login Success:", data);
-
       if (data.user) {
         setCurrentUser(data.user);
         setCookie("loggedInUser", encodeURIComponent(JSON.stringify(data.user)));
@@ -114,10 +107,7 @@ const Header = () => {
                 <button className="button">{getButtonLabel()}</button>
                 {/* If admin, show Add Property button */}
                 {currentUser.role === "ADMIN" && (
-                  <button
-                    className="button"
-                    onClick={() => navigate("/add-property")}
-                  >
+                  <button className="button" onClick={() => navigate("/add-property")}>
                     Add Property
                   </button>
                 )}
@@ -129,44 +119,17 @@ const Header = () => {
           </div>
         </OutsideClickHandler>
 
-        <div
-          className="menu-icon"
-          onClick={() => setMenuOpened((prev) => !prev)}
-        >
+        <div className="menu-icon" onClick={() => setMenuOpened((prev) => !prev)}>
           <BiMenuAltRight size={30} />
         </div>
       </div>
 
+      {/* Render the LoginModal when showLoginModal is true */}
       {showLoginModal && (
-        <div className="modalOverlay">
-          <div className="modalContent">
-            <h2>Login</h2>
-            <form onSubmit={handleLogin}>
-              <div>
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label>Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <button type="submit">Log In</button>
-              <button type="button" onClick={() => setShowLoginModal(false)}>
-                Cancel
-              </button>
-            </form>
-          </div>
-        </div>
+        <LoginModal
+          onSubmit={handleLoginData}
+          onClose={() => setShowLoginModal(false)}
+        />
       )}
     </section>
   );

@@ -27,7 +27,6 @@ import { transformResidencyData } from "../../utils/residencyValidation";
 // 1) Retrieve server URL from environment variable, fallback to local
 const serverURL = import.meta.env.VITE_SERVER_URL;
 
-
 const Property = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -176,7 +175,6 @@ const Property = () => {
           />
         )}
 
-
         {/* If admin, show 'Edit' button to toggle edit mode (unless already editing) */}
         {isAdmin && !editMode && (
           <button className="button" onClick={() => setEditMode(true)}>
@@ -272,8 +270,7 @@ const Property = () => {
                 <div className="flexStart feature">
                   <PiResizeLight size={25} color="#1F3E72" />
                   <span>
-                    Lot Size:{" "}
-                    {formatPrice(propertyData.sqft) || "Not available"} sqft
+                    Lot Size: {formatPrice(propertyData.sqft) || "Not available"} sqft
                   </span>
                 </div>
               )}
@@ -308,9 +305,7 @@ const Property = () => {
               ) : (
                 <div className="flexStart feature">
                   <TbMapCheck size={25} color="#1F3E72" />
-                  <span>
-                    Zoning: {propertyData?.zoning || "Not applicable"}
-                  </span>
+                  <span>Zoning: {propertyData?.zoning || "Not applicable"}</span>
                 </div>
               )}
 
@@ -329,9 +324,7 @@ const Property = () => {
               ) : (
                 <div className="flexStart feature">
                   <FaRoad size={25} color="#1F3E72" />
-                  <span>
-                    Road Condition: {propertyData?.roadCondition || "Unknown"}
-                  </span>
+                  <span>Road Condition: {propertyData?.roadCondition || "Unknown"}</span>
                 </div>
               )}
 
@@ -350,10 +343,7 @@ const Property = () => {
               ) : (
                 <div className="flexStart feature">
                   <FaTrailer size={25} color="#1F3E72" />
-                  <span>
-                    Mobile Homes:{" "}
-                    {propertyData?.mobileHomeFriendly ? "Yes" : "No"}
-                  </span>
+                  <span>Mobile Homes: {propertyData?.mobileHomeFriendly ? "Yes" : "No"}</span>
                 </div>
               )}
 
@@ -370,9 +360,7 @@ const Property = () => {
               ) : (
                 <div className="flexStart feature">
                   <RiFloodLine size={25} color="#1F3E72" />
-                  <span>
-                    Floodplain: {propertyData?.floodplain || "Not available"}
-                  </span>
+                  <span>Floodplain: {propertyData?.floodplain || "Not available"}</span>
                 </div>
               )}
 
@@ -389,9 +377,7 @@ const Property = () => {
               ) : (
                 <div className="flexStart feature">
                   <MdOutlineHouseSiding size={25} color="#1F3E72" />
-                  <span>
-                    HOA/POA: {propertyData?.hoaPoa || "Not applicable"}
-                  </span>
+                  <span>HOA/POA: {propertyData?.hoaPoa || "Not applicable"}</span>
                 </div>
               )}
 
@@ -410,9 +396,23 @@ const Property = () => {
               ) : (
                 <div className="flexStart feature">
                   <TbSmartHomeOff size={25} color="#1F3E72" />
-                  <span>
-                    Restrictions: {propertyData?.restrictions || "None"}
-                  </span>
+                  <span>Restrictions: {propertyData?.restrictions || "None"}</span>
+                </div>
+              )}
+
+              {/* New Field: Owner ID */}
+              {editMode && isAdmin ? (
+                <div className="flexStart feature">
+                  <label>Owner ID:</label>
+                  <input
+                    type="text"
+                    value={propertyData.ownerid || ""}
+                    onChange={(e) => handleChange("ownerId", e.target.value)}
+                  />
+                </div>
+              ) : (
+                <div className="flexStart feature">
+                  <span>Owner ID: {propertyData?.ownerid || "Not available"}</span>
                 </div>
               )}
             </div>
@@ -426,10 +426,7 @@ const Property = () => {
                   onChange={(e) => handleChange("description", e.target.value)}
                 />
               ) : (
-                <span
-                  className="secondaryText"
-                  style={{ textAlign: "justify" }}
-                >
+                <span className="secondaryText" style={{ textAlign: "justify" }}>
                   {propertyData?.description}
                 </span>
               )}
@@ -452,7 +449,7 @@ const Property = () => {
             )}
 
             {/* Offer Button (always visible) */}
-            {!editMode && (
+            {!editMode && !isAdmin && (
               <button
                 className="button"
                 onClick={() =>
@@ -476,7 +473,7 @@ const Property = () => {
         </div>
         <div>
           {/* Show all offers only if the user is an admin */}
-          {isAdmin && (
+          {isAdmin && !editMode && (
             <div className="offers-section">
               <h3>All Offers for This Property</h3>
 
