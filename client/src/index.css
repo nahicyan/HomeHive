@@ -103,7 +103,7 @@ a {
   background-color: #fff;
 }
 
-/* media queries */
+
 @media (min-width: 1536px) {
   .innerWidth {
     max-width: 1280px;

@@ -1,49 +1,56 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./AddProperty.css"
 
-// For Vite:
-// const serverURL = import.meta.env.VITE_SERVER_URL || "http://localhost:8400";
-// For CRA:
 const serverURL = import.meta.env.VITE_SERVER_URL;
 
 const AddProperty = () => {
   const navigate = useNavigate();
 
-  // Full form state
   const [formData, setFormData] = useState({
     ownerid: "",
-    apnOrPin: "",
-    askingPrice: "",
-    minPrice: "",
+    userEmail: "",
+    area: "",
     title: "",
     description: "",
-    address: "",
-    zip: "",
-    city: "",
-    county: "",
-    state: "",
-    facilities: "{}",
-    userEmail: "",
-    status: "",
-    flyer: "",
-    propertyAddress: "",
-    sqft: "",
-    acre: "",
+    type: "",
+    subtype: "",
     zoning: "",
-    utilities: "{}",
-    roadCondition: "",
     restrictions: "",
     mobileHomeFriendly: "false",
     hoaPoa: "",
-    floodplain: "",
     hoaDeedDevInfo: "",
     notes: "",
+    apnOrPin: "",
+    streetaddress: "",
+    city: "",
+    county: "",
+    state: "",
+    zip: "",
+    latitude: "",
+    longitude: "",
+    landId: "",
+    landIdLink: "",
+    sqft: "",
+    acre: "",
+    image: "",
+    askingPrice: "",
+    minPrice: "",
+    disPrice: "",
+    financing: "false",
+    status: "Available",
+    water: "",
+    sewer: "",
+    electric: "",
+    roadCondition: "",
+    floodplain: "",
+    ltag: "",
+    rtag: "",
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
 
-  // Handle text changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -52,12 +59,10 @@ const AddProperty = () => {
     }));
   };
 
-  // Handle file
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
 
-  // Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -79,349 +84,145 @@ const AddProperty = () => {
         }
       );
 
-      console.log("Property created:", response.data);
       alert("Property Added Successfully!");
       navigate("/properties");
     } catch (error) {
-      console.error("Error creating property:", error);
       alert("Failed to create property");
     }
   };
 
+  
+
   return (
-    <div
-      style={{
-        maxWidth: "600px",
-        margin: "0 auto",
-        color: "#fff",
-        backgroundColor: "#333",
-        padding: "1rem",
-        borderRadius: "8px",
-      }}
-    >
+    <div className="form-wrapper">
       <h1>Add New Property</h1>
+      <p>Please fill out the form below to add a new property.</p>
 
       <form onSubmit={handleSubmit}>
-        {/* ownerid */}
-        <label>Owner ID:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="number"
-          name="ownerid"
-          value={formData.ownerid}
-          onChange={handleChange}
-          required
-        />
-        <br />
+        <h3>System Information</h3>
+        <div className="form-row">
+          <InputField label="Owner ID" name="ownerid" value={formData.ownerid} onChange={handleChange} required />
+          <InputField label="User Email (Owner)" name="userEmail" value={formData.userEmail} onChange={handleChange} required />
+          <InputField label="Area" name="area" value={formData.area} onChange={handleChange} required />
+        </div>
 
-        {/* apnOrPin */}
-        <label>APN or PIN:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="apnOrPin"
-          value={formData.apnOrPin}
-          onChange={handleChange}
-        />
-        <br />
+        <h3>Property Details</h3>
+        <div className="form-row">
+          <InputField label="Title" name="title" value={formData.title} onChange={handleChange} required />
+          <InputField label="Description" name="description" value={formData.description} onChange={handleChange} />
+          <InputField label="Type" name="type" value={formData.type} onChange={handleChange} />
+          <InputField label="Sub Type" name="subtype" value={formData.subtype} onChange={handleChange} />
+          <InputField label="Zoning" name="zoning" value={formData.zoning} onChange={handleChange} />
+          <InputField label="Restrictions" name="restrictions" value={formData.restrictions} onChange={handleChange} />
+          <InputField label="Mobile Home Friendly" name="mobileHomeFriendly" value={formData.mobileHomeFriendly} onChange={handleChange} required type="select" options={["No", "Yes"]} />
+          <InputField label="HOA / POA" name="hoaPoa" value={formData.hoaPoa} onChange={handleChange} />
+          <InputField label="HOA / Deed / Development Info" name="hoaDeedDevInfo" value={formData.hoaDeedDevInfo} onChange={handleChange} />
+          <InputField label="Notes" name="notes" value={formData.notes} onChange={handleChange} />
+        </div>
+        <h3>Location</h3>
+        <div className="form-row">
+          <InputField label="APN or PIN" name="apnOrPin" value={formData.apnOrPin} onChange={handleChange} required />
+          <InputField label="Street Address" name="streetaddress" value={formData.streetaddress} onChange={handleChange} required />
+          <InputField label="City" name="city" value={formData.city} onChange={handleChange} required />
+        </div>
 
-        {/* askingPrice */}
-        <label>Asking Price:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="number"
-          name="askingPrice"
-          value={formData.askingPrice}
-          onChange={handleChange}
-          required
-        />
-        <br />
+        <div className="form-row">
+          <InputField label="County" name="county" value={formData.county} onChange={handleChange} required />
+          <InputField label="State" name="state" value={formData.state} onChange={handleChange} required />
+          <InputField label="ZIP" name="zip" value={formData.zip} onChange={handleChange} required />
+        </div>
+        <h3>Map</h3>
+        <div className="form-row">
+          <InputField label="Latitude" name="latitude" value={formData.latitude} onChange={handleChange} required type="number" />
+          <InputField label="Longitude" name="longitude" value={formData.longitude} onChange={handleChange} required type="number" />
+          <InputField label="Land ID" name="landId" value={formData.landId} onChange={handleChange} required type="select" options={["No", "Yes"]} />
+        </div>
 
-        {/* minPrice */}
-        <label>Min Price:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="number"
-          name="minPrice"
-          value={formData.minPrice}
-          onChange={handleChange}
-        />
-        <br />
+        <InputField label="Land ID Link" name="landIdLink" value={formData.landIdLink} onChange={handleChange} />
 
-        {/* title */}
-        <label>Title:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-        <br />
+        <h3>Physical Attributes</h3>
+        <div className="form-row">
+          <InputField label="Square Footage (sqft)" name="sqft" value={formData.sqft} onChange={handleChange} required type="number" />
+          <InputField label="Acre" name="acre" value={formData.acre} onChange={handleChange} type="number" />
+          <InputField label="Image Upload" name="image" onChange={handleFileChange} type="file" />
+        </div>
 
-        {/* description */}
-        <label>Description:</label>
-        <textarea
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          rows={4}
-        />
-        <br />
+        <h3>Pricing and Financing</h3>
+        <div className="form-row">
+          <InputField label="Asking Price" name="askingPrice" value={formData.askingPrice} onChange={handleChange} required type="number" />
+          <InputField label="Minimum Price" name="minPrice" value={formData.minPrice} onChange={handleChange} required type="number" />
+          <InputField label="Discount Price" name="disPrice" value={formData.disPrice} onChange={handleChange} type="number" />
+        </div>
 
-        {/* address */}
-        <label>Address:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          required
-        />
-        <br />
+        <InputField label="Financing Available" name="financing" value={formData.financing} onChange={handleChange} required type="select" options={["No", "Yes"]} />
+        <InputField label="Status" name="status" value={formData.status} onChange={handleChange} />
 
-        {/* zip */}
-        <label>ZIP:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="zip"
-          value={formData.zip}
-          onChange={handleChange}
-        />
-        <br />
+        <h3>Utilities and Infrastructure</h3>
+        <div className="form-row">
+          <InputField label="Water" name="water" value={formData.water} onChange={handleChange} />
+          <InputField label="Sewer" name="sewer" value={formData.sewer} onChange={handleChange} />
+          <InputField label="Electric" name="electric" value={formData.electric} onChange={handleChange} />
+          <InputField label="Road Condition" name="roadCondition" value={formData.roadCondition} onChange={handleChange} />
+          <InputField label="FloodPlain" name="floodplain" value={formData.floodplain} onChange={handleChange} />
+        </div>
 
-        {/* city */}
-        <label>City:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-        />
-        <br />
+        <h3>Tags</h3>
+        <div className="form-row">
+        <InputField label="Left Tag" name="ltag" value={formData.ltag} onChange={handleChange} />
+        <InputField label="Right Tag" name="rtag" value={formData.rtag} onChange={handleChange} />
+        </div>
 
-        {/* county */}
-        <label>County:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="county"
-          value={formData.county}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* state */}
-        <label>State:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* image file */}
-        <label>Image File:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="file"
-          onChange={handleFileChange}
-        />
-        <br />
-
-        {/* facilities (JSON) */}
-        <label>Facilities (JSON):</label>
-        <textarea
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          name="facilities"
-          value={formData.facilities}
-          onChange={handleChange}
-          rows={2}
-        />
-        <br />
-
-        {/* userEmail */}
-        <label>User Email (Owner):</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="email"
-          name="userEmail"
-          value={formData.userEmail}
-          onChange={handleChange}
-          required
-        />
-        <br />
-
-        {/* status */}
-        <label>Status:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* flyer */}
-        <label>Flyer URL:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="flyer"
-          value={formData.flyer}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* propertyAddress */}
-        <label>Property Address:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="propertyAddress"
-          value={formData.propertyAddress}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* sqft */}
-        <label>Square Footage (sqft):</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="number"
-          name="sqft"
-          value={formData.sqft}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* acre */}
-        <label>Acre:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="number"
-          step="0.01"
-          name="acre"
-          value={formData.acre}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* zoning */}
-        <label>Zoning:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="zoning"
-          value={formData.zoning}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* utilities (JSON) */}
-        <label>Utilities (JSON):</label>
-        <textarea
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          name="utilities"
-          value={formData.utilities}
-          onChange={handleChange}
-          rows={2}
-        />
-        <br />
-
-        {/* roadCondition */}
-        <label>Road Condition:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="roadCondition"
-          value={formData.roadCondition}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* restrictions */}
-        <label>Restrictions:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="restrictions"
-          value={formData.restrictions}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* mobileHomeFriendly (boolean) */}
-        <label>Mobile Home Friendly:</label>
-        <select
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          name="mobileHomeFriendly"
-          value={formData.mobileHomeFriendly}
-          onChange={handleChange}
-        >
-          <option value="false">No</option>
-          <option value="true">Yes</option>
-        </select>
-        <br />
-
-        {/* hoaPoa */}
-        <label>HOA/POA:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="hoaPoa"
-          value={formData.hoaPoa}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* floodplain */}
-        <label>Floodplain:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="floodplain"
-          value={formData.floodplain}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* hoaDeedDevInfo */}
-        <label>HOA Deed Dev Info:</label>
-        <input
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          type="text"
-          name="hoaDeedDevInfo"
-          value={formData.hoaDeedDevInfo}
-          onChange={handleChange}
-        />
-        <br />
-
-        {/* notes */}
-        <label>Notes:</label>
-        <textarea
-          style={{ color: "#fff", backgroundColor: "#444" }}
-          name="notes"
-          value={formData.notes}
-          onChange={handleChange}
-          rows={2}
-        />
-        <br />
-
-        <button style={{ marginTop: "1rem" }} type="submit">
-          Submit
-        </button>
+        <button className="submit-btn" type="submit">Submit</button>
       </form>
     </div>
   );
 };
+
+const InputField = ({ label, name, value, onChange, required = false, type = "text", options = [] }) => {
+  if (type === "file") {
+    return (
+      <div className="input-group file-upload-container">
+        <label>{label}{required && <span className="required">*</span>}</label>
+
+        {/* Hidden File Input */}
+        <input 
+          type="file" 
+          id={name} 
+          name={name} 
+          className="file-upload-input" 
+          onChange={(e) => {
+            onChange(e); 
+            const fileName = e.target.files[0] ? e.target.files[0].name : "No file chosen";
+            document.getElementById(`${name}-name`).textContent = fileName;
+          }} 
+          required={required}
+        />
+        
+        {/* Custom Styled Upload Button */}
+        <label htmlFor={name} className="file-upload-label">Choose an Image</label>
+        
+        {/* Display Selected File Name */}
+        <span id={`${name}-name`} className="file-upload-name">No file chosen</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="input-group">
+      <label>{label}{required && <span className="required">*</span>}</label>
+      {type === "select" ? (
+        <select name={name} value={value} onChange={onChange} required={required}>
+          {options.map(option => <option key={option} value={option}>{option}</option>)}
+        </select>
+      ) : type === "textarea" ? (
+        <textarea name={name} value={value} onChange={onChange} required={required} />
+      ) : (
+        <input type={type} name={name} value={value} onChange={onChange} required={required} />
+      )}
+    </div>
+  );
+};
+
+
 
 export default AddProperty;

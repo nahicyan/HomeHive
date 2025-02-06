@@ -1,0 +1,212 @@
+/* Import SF Pro Display */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://developer.apple.com/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Poppins', Arial, sans-serif;
+  background-color: #FDFDFD;
+  color: #1d1d1f;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Form Wrapper */
+.form-wrapper {
+  max-width: 750px;
+  margin: 50px auto;
+  padding: 35px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid #E3E3E3;
+}
+
+.form-wrapper:hover {
+  transform: translateY(-3px);
+}
+
+.form-wrapper h1 {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1d1d1f;
+}
+
+.form-wrapper p {
+  font-size: 15px;
+  margin-bottom: 25px;
+  color: #666;
+}
+
+/* Section Headers */
+.form-wrapper h3 {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1d1d1f;
+  margin: 30px 0 12px;
+  border-bottom: 2px solid #002647;
+  padding-bottom: 5px;
+}
+
+/* Form Rows */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-row > * {
+  flex: 1;
+  min-width: 220px;
+}
+
+/* Input Fields */
+input,
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #E3E3E3;
+  border-radius: 12px;
+  background: #FDFDFD;
+  font-size: 15px;
+  color: #1d1d1f;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+input::placeholder {
+  color: #A1A1A6;
+  font-weight: 300;
+}
+
+input:focus,
+select:focus {
+  border-color: #E65100;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 109, 41, 0.3);
+}
+
+/* Select Dropdown */
+select {
+  appearance: none;
+  background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns="http://www.w3.org/2000/svg" width="12" height="6"%3E%3Cpath fill="%2399999F" d="M0 0l6 6 6-6z"/%3E%3C/svg%3E') no-repeat right 16px center;
+  background-size: 12px 6px;
+}
+
+/* File Upload - Hide Default Input */
+.file-upload-input {
+  display: none;
+}
+
+/* File Upload Container - Align Items in Column */
+.file-upload-container {
+  display: flex;
+  flex-direction: column;  /* Stacks button and file name vertically */
+  align-items: flex-start; /* Align to the left */
+  gap: 8px; /* Space between button & file name */
+}
+
+/* Custom File Upload Button */
+.file-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(135deg, #FF8C42, #FF6F00);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+  white-space: nowrap; /* Prevents text from wrapping */
+  height: 40px; /* Ensures consistent height */
+}
+
+/* Hover & Click Effects */
+.file-upload-label:hover {
+  background: linear-gradient(135deg, #FF6F00, #E65100);
+  box-shadow: 0 6px 16px rgba(255, 140, 66, 0.4);
+}
+
+.file-upload-label:active {
+  background: #E65100;
+  transform: scale(0.98);
+}
+
+/* Uploaded File Name */
+.file-upload-name {
+  font-size: 14px;
+  color: #666;
+  font-weight: 400;
+  height: 20px;
+  display: flex;
+  align-items: center; /* Ensures vertical alignment */
+}
+
+
+/* Submit Button */
+.submit-btn {
+  display: inline-block;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #FF8C42, #FF6F00);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, #FF6F00, #E65100);
+  box-shadow: 0 6px 16px rgba(255, 140, 66, 0.3);
+}
+
+.submit-btn:active {
+  background: #E65100;
+  transform: scale(0.98);
+}
+
+/* Checkbox & Select */
+input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: #2979FF;
+}
+
+/* Link Style */
+a {
+  color: #2979FF;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #FF8C42;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+  }
+}

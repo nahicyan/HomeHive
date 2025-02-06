@@ -1,119 +1,527 @@
-.property-container {
-    gap: 2rem;
-    position: relative;
-    display: flex; /* Add flex for horizontal alignment */
-    flex-direction: column; /* Keep items stacked vertically */
-}
-
-.property-container .like {
-    position: absolute;
-    top: 3rem;
-    right: 3rem;
-    cursor: pointer;
-}
-
-.property-container > img {
-    align-self: center;
-    width: 100%;
-    border-radius: 1rem;
-    object-fit: cover;
-}
-
-.property-details {
-    width: 100%;
-    gap: 2rem;
-    justify-content: space-between;
-    display: flex;
-    flex-wrap: wrap; /* Allow wrapping if necessary */
-}
-
-.property-details > div {
-    flex: 1;
-    gap: 1.5rem;
-}
-
-.features {
-    gap: 1.5rem; /* Increase gap for clarity */
-    font-size: 0.9rem;
-    padding: 1.5rem; /* Consistent padding */
-    flex-wrap: wrap; 
-}
-
-.feature {
-    gap: 0.75rem; /* Slightly wider spacing for icons */
-    display: flex;
-    align-items: center;
-}
-
-.property-details .left .head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 1rem; /* Add spacing between wrapped items */
-}
-
-.property-details .button {
-    width: 100%;
-    margin-top: 1rem;
-    text-align: center;
-}
-
-.property-details .button:hover {
-    transform: scale(1.1);
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 
-/* Admin Offers Section */
-.offers-section {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    margin-top: 2rem;
-    border-left: 5px solid #ffb000;
-}
-
-.offers-section h3 {
-    font-size: 1.5rem;
-    color: #1f3e72;
-    margin-bottom: 1rem;
+/* Base Tag Styling */
+.tag {
+    display: inline-block;
+    padding: 8px 18px;  /* Increased padding for larger size */
+    font-size: 14px;    /* Slightly larger font */
+    font-weight: 600;   /* Bolder text */
     text-transform: uppercase;
-    font-weight: bold;
-}
-
-.offer-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    border: 2px solid transparent;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    letter-spacing: 1.2px;  /* Subtle letter spacing for clarity */
+    color: #ffffff;
+    margin-right: 12px;  /* Gap between tags */
+  }
+  
+  /* Add margin around the tags container */
+  .tags-container {
+    margin-bottom: 20px;  /* Adds space between tags and other content */
     display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
+    flex-wrap: wrap;      /* Ensures tags wrap on smaller screens */
+  }
+  
+  /* Hot Tag - Filled Orange by Default */
+  .hot-tag {
+    background-color: #FF6F00;
+    border-color: #FF6F00;
+  }
+  
+  .hot-tag:hover {
+    background-color: transparent;
+    color: #FF6F00;
+    transform: translateY(-3px);  /* Slightly more lift */
+    box-shadow: 0 5px 15px rgba(255, 111, 0, 0.3);
+  }
+  
+  /* Featured Tag - Filled Blue by Default */
+  .featured-tag {
+    background-color: #0071E3;
+    border-color: #0071E3;
+  }
+  
+  .featured-tag:hover {
+    background-color: transparent;
+    color: #0071E3;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 113, 227, 0.3);
+  }
+  
+
+body {
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Poppins",
+    Arial, sans-serif;
+  background-color: #f2f2f5;
+  color: #1d1d1f;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.8;
+  letter-spacing: 0.5px;
 }
 
-.offer-item {
-    background: white;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-    flex: 1;
-    min-width: 250px;
-    max-width: 300px;
-    transition: transform 0.2s ease-in-out;
+/* Main Container */
+.property-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px; /* Reduced from 50px */
+  max-width: 1100px; /* Slightly narrower for compact look */
+  margin: 50px auto;
+  padding: 35px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.offer-item:hover {
-    transform: scale(1.03);
+/* Left Section */
+.property-left {
+  flex: 2;
 }
 
-.offer-item p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-    color: #333;
+.property-address {
+  font-size: 13px; /* Slightly smaller */
+  color: #8e8e93;
+  margin-bottom: 10px; /* Reduced space below */
+  font-weight: 300;
+  letter-spacing: 0.8px;
 }
 
-.offer-item strong {
-    color: #1f3e72;
+.property-title {
+  font-size: 32px; /* Reduced from 34px */
+  font-weight: 400;
+  margin-bottom: 25px; /* Reduced from 30px */
+  color: #1d1d1f;
+  line-height: 1.3;
 }
+
+/* Main Image */
+.property-main-image {
+  width: 100%;
+  border-radius: 14px; /* Slightly tighter rounding */
+  overflow: hidden;
+  margin-bottom: 25px; /* Reduced from 30px */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.property-main-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Description */
+.property-description {
+  font-size: 15px; /* Slightly smaller */
+  line-height: 1.8;
+  color: #6e6e73;
+  font-weight: 300;
+  text-align: justify;
+  margin-top: 20px; /* Reduced from 25px */
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+
+/* Right Section */
+.property-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Reduced from 25px */
+}
+
+/* Scrollable Image Gallery */
+.property-gallery-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Reduced from 20px */
+  max-height: 380px; /* Slightly less height */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c0c0c5 #f1f1f3;
+}
+
+.property-gallery-scroll img {
+  width: 100%;
+  height: 180px; /* Reduced from 200px */
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.property-gallery-scroll img:hover {
+  transform: scale(1.02);
+}
+
+/* Buttons */
+.property-actions button {
+  padding: 14px 28px; /* Reduced padding */
+  background: linear-gradient(135deg, #ff8c42, #ff6f00);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+  border: none;
+  border-radius: 12px; /* Slightly tighter rounding */
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.property-actions button:hover {
+  background: linear-gradient(135deg, #ff6f00, #e65100);
+  box-shadow: 0 6px 16px rgba(255, 140, 66, 0.4);
+}
+
+.property-actions button:active {
+  background: #e65100;
+  transform: scale(0.97);
+}
+
+/* Status */
+.property-status {
+  font-size: 13px; /* Slightly smaller */
+  color: #0071e3;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.5px;
+}
+
+.status-dot {
+  width: 8px; /* Slightly smaller */
+  height: 8px;
+  background-color: #00c853;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Price and Acres */
+.property-price {
+  font-size: 26px; /* Reduced from 28px */
+  font-weight: 300;
+  color: #1d1d1f;
+  letter-spacing: 0.5px;
+}
+
+.property-acres {
+  font-size: 18px;
+  color: #333335;
+  font-weight: 300;
+}
+
+/* Divider Line Between Sections */
+.property-section,
+.property-category {
+  background-color: #f9f9fb;
+  padding: 18px 22px; /* Reduced padding */
+  margin-bottom: 20px; /* Reduced from 25px */
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  border: 0.5px solid #e6e6ea;
+}
+
+/* Section Headers - Add Thin Line */
+.property-section h3,
+.property-category h3,
+.property-details-section h3,
+.property-left h3 {
+  font-size: 18px; /* Slightly smaller */
+  font-weight: 400;
+  color: #1d1d1f;
+  margin-bottom: 12px; /* Reduced from 15px */
+  padding-bottom: 6px; /* Reduced from 8px */
+  border-bottom: 0.5px solid #dcdce0;
+}
+
+/* Section List Styling */
+.property-section ul,
+.property-category ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.property-section li {
+  font-size: 14px; /* Slightly smaller */
+  color: #4a4a4a;
+  margin-bottom: 5px;
+  line-height: 1.7; /* Tighter line spacing */
+  font-weight: 300;
+}
+
+/* Quick Facts Section */
+.quick-facts {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 35px; /* Added more breathing room */
+}
+
+.fact-item {
+  background: linear-gradient(135deg, #f9f9fb, #f4f4f5);
+  padding: 25px;
+  border-radius: 14px;
+  text-align: center;
+  flex: 1;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover Effect */
+.fact-item:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #e0e0e3, #ffffff);
+}
+
+/* Decorative Accent Line */
+.fact-item::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #ff8c42, #ff6f00);
+  top: 0;
+  left: 0;
+  transition: transform 0.3s ease;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* Accent Line on Hover */
+.fact-item:hover::before {
+  transform: scaleX(1);
+}
+
+/* Fact Content Styling */
+.fact-item h4 {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1d1d1f;
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+/* Subtle color shift on hover */
+.fact-item:hover h4 {
+  color: #ff6f00;
+}
+
+.fact-item span {
+  font-size: 14px;
+  color: #7a7a7a;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+/* Lighter subtitle on hover */
+.fact-item:hover span {
+  color: #ff8c42;
+}
+
+/* Links */
+.property-category a {
+  color: #0071e3;
+  text-decoration: none;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+}
+
+.property-category a:hover {
+  text-decoration: underline;
+}
+
+.new-line {
+  display: block; /* Forces the span to take up a new line */
+  margin-top: 5px; /* Optional: Adds some space between the number and the label */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .property-container {
+    flex-direction: column;
+  }
+
+  .property-gallery-scroll {
+    flex-direction: row;
+    overflow-x: auto;
+    max-height: none;
+    max-width: 100%;
+  }
+
+  .property-gallery-scroll img {
+    width: 200px; /* Reduced from 220px */
+    height: 150px; /* Reduced from 160px */
+    flex-shrink: 0;
+  }
+
+  .quick-facts {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 600px) {
+  .property-title {
+    font-size: 24px;
+  }
+
+  .property-price {
+    font-size: 20px;
+  }
+
+  .property-description {
+    font-size: 14px;
+  }
+}
+
+
+.disclaimer-section {
+    background-color: #f9f9fb;
+    border: 1px solid #e0e0e3;
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin: 30px auto;
+    max-width: 1100px;
+    font-size: 10px;  /* Make text really small */
+    line-height: 1;
+    color: #6e6e73;  /* Subtle text color */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    position: relative;
+  }
+  
+  /* Add a decorative line at the top */
+  .disclaimer-section::before {
+    content: "Disclaimer";
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #ffffff;
+    padding: 0 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #ff6f00;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Add a faint italic effect for legal tone */
+  .disclaimer-section p {
+    margin-bottom: 12px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .disclaimer-section {
+      padding: 15px 20px;
+      font-size: 11px;
+    }
+    
+    .disclaimer-section::before {
+      font-size: 12px;
+    }
+  }
+  
+
+
+.total-visitors {
+    font-size: 14px;
+    color: #6e6e73;
+    background-color: #f5f5f7;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: 500;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    margin-left: 15px; /* Adds spacing from tags */
+    display: inline-block;
+    transition: all 0.3s ease;
+  }
+  
+  .total-visitors:hover {
+    background-color: #0071E3;
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 113, 227, 0.2);
+  }
+
+
+
+
+/* Sticky Footer */
+.sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1100px;  /* Match container width */
+    background: #ffffff;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;  /* Evenly distribute buttons */
+    align-items: center;
+    padding: 10px;  /* Reduced padding for tighter look */
+    z-index: 1000;
+    border-top: 1px solid #e0e0e3;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  /* Sticky when scrolling */
+  .sticky-footer.sticky {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    transition: all 0.4s ease-in-out;
+  }
+  
+  /* Static when at the end of the container */
+  .sticky-footer.static {
+    position: static;
+    transform: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  
+  /* Button Styling */
+  .call-btn, .message-btn, .offer-btn {
+    flex: 1;  /* Make each button take equal space */
+    padding: 15px 0;  /* Uniform vertical padding */
+    margin: 0 5px;  /* Add small margin between buttons */
+    font-size: 16px;  /* Slightly larger font size */
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* Button Colors */
+  .message-btn { background: #007bff; }
+  .offer-btn { background: #ff8c42; }
+  .call-btn { background: #28a745; }
+  
+  /* Hover Effects */
+  .message-btn:hover { background: #0056b3; transform: translateY(-2px); }
+  .offer-btn:hover { background: #e6761f; transform: translateY(-2px); }
+  .call-btn:hover { background: #1e7a34; transform: translateY(-2px); }
+  
+  /* Remove margin on small screens for edge-to-edge buttons */
+  @media (max-width: 600px) {
+    .call-btn, .message-btn, .offer-btn {
+      margin: 0 2px;
+      font-size: 14px;
+    }
+  }
+  

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -23,6 +23,7 @@ import Map from "../../components/Map/Map";
 import { FaMagnifyingGlassLocation } from "react-icons/fa6";
 import { UserContext } from "../../utils/UserContext";
 import { transformResidencyData } from "../../utils/residencyValidation";
+import { FaPhoneAlt, FaEnvelope, FaHandshake } from "react-icons/fa";
 
 // 1) Retrieve server URL from environment variable, fallback to local
 const serverURL = import.meta.env.VITE_SERVER_URL;
@@ -30,6 +31,8 @@ const serverURL = import.meta.env.VITE_SERVER_URL;
 const Property = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const contentRef = useRef(null); // Ref to main container for sticky footer logic
+  const [isSticky, setIsSticky] = useState(true); // S
 
   // Extract property ID from the URL
   const id = pathname.split("/").slice(-1)[0];
@@ -106,6 +109,20 @@ const Property = () => {
     }
   };
 
+  // Sticky Footer Logic
+  useEffect(() => {
+    const handleScroll = () => {
+      const contentBottom = contentRef.current.getBoundingClientRect().bottom;
+      const windowHeight = window.innerHeight;
+
+      // Disable sticky when content bottom is visible
+      setIsSticky(contentBottom > windowHeight);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // Handle loading & error states
   if (isLoading) {
     return (
@@ -150,370 +167,256 @@ const Property = () => {
   };
 
   return (
-    <div className="wrapper">
-      <div className="flexColStart paddings innerWidth property-container">
-        {/* Like Button */}
-        <div className="like">
-          <AiFillStar size={24} color="#ffB000" />
+    <div className="property-container" ref={contentRef}>
+      {/* Left Section */}
+      <div className="property-left">
+        <div className="tags-container">
+          <span className="tag hot-tag">{propertyData.ltag}</span>
+          <span className="tag featured-tag">{propertyData.rtag}</span>
+          <span className="total-visitors">
+            Total Visitors: {propertyData.viewCount} (Admin)
+          </span>
         </div>
-
-        {editMode && isAdmin ? (
-          <div style={{ marginBottom: "1rem" }}>
-            <label>Image URL: </label>
-            <input
-              type="text"
-              value={propertyData.image || ""}
-              onChange={(e) => handleChange("image", e.target.value)}
-            />
-          </div>
-        ) : (
-          // 2) Build the final URL using serverURL
+        {/* Address and Title */}
+        <p className="property-address">
+          {propertyData.streetaddress}, {propertyData.city},{" "}
+          {propertyData.state} {propertyData.zip}
+        </p>
+        <h1 className="property-title">{propertyData.title}</h1>
+        {/* Main Image */}
+        <div className="property-main-image">
           <img
             src={`${serverURL}/${propertyData.image}`}
-            alt="Property"
-            style={{ maxWidth: "100%" }}
+            alt={propertyData.title}
           />
-        )}
-
-        {/* If admin, show 'Edit' button to toggle edit mode (unless already editing) */}
-        {isAdmin && !editMode && (
-          <button className="button" onClick={() => setEditMode(true)}>
-            Edit
-          </button>
-        )}
-
-        {/* Property Details */}
-        <div className="flexCenter property-details">
-          <div className="flexColStart left">
-            {/* Title & Pricing */}
-            <div className="flexStart head">
-              {editMode && isAdmin ? (
-                <>
-                  <div>
-                    <label>Address:</label>
-                    <input
-                      type="text"
-                      value={propertyData.address || ""}
-                      onChange={(e) => handleChange("address", e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label>Acre:</label>
-                    <input
-                      type="number"
-                      value={propertyData.acre || ""}
-                      onChange={(e) => handleChange("acre", e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label>Asking Price:</label>
-                    <input
-                      type="number"
-                      value={propertyData.askingPrice || ""}
-                      onChange={(e) =>
-                        handleChange("askingPrice", e.target.value)
-                      }
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <span className="primaryText" style={{ fontSize: "1.75rem" }}>
-                    {propertyData?.address}
-                  </span>
-                  <span
-                    className="secondaryText acres"
-                    style={{ fontSize: "1.5rem", marginLeft: "1rem" }}
-                  >
-                    {propertyData?.acre} acres
-                  </span>
-                  <span
-                    className="orangeText"
-                    style={{ fontSize: "1.5rem", marginLeft: "auto" }}
-                  >
-                    ${formatPrice(propertyData.askingPrice) || "Not available"}
-                  </span>
-                </>
-              )}
+        </div>
+        {/* Description */}
+        <h3>Description</h3>
+        <p className="property-description">{propertyData.description}</p>
+        <div className="property-details-section">
+          {/* Quick Facts */}
+          <h3>Highlights</h3>
+          <div className="quick-facts">
+            <div className="fact-item">
+              <h4>{propertyData.sqft.toLocaleString()}</h4>
+              <span>Sq Feet</span>
             </div>
 
-            {/* Features Grid */}
-            <div className="flexStart features">
-              {/* APN/PIN */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>APN/PIN:</label>
-                  <input
-                    type="text"
-                    value={propertyData.apnOrPin || ""}
-                    onChange={(e) => handleChange("apnOrPin", e.target.value)}
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <FaMagnifyingGlassLocation size={25} color="#1F3E72" />
-                  <span>APN: {propertyData.apnOrPin || "Not available"}</span>
-                </div>
-              )}
-
-              {/* Square Footage */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>Lot Size (sqft):</label>
-                  <input
-                    type="number"
-                    value={propertyData.sqft || ""}
-                    onChange={(e) => handleChange("sqft", e.target.value)}
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <PiResizeLight size={25} color="#1F3E72" />
-                  <span>
-                    Lot Size: {formatPrice(propertyData.sqft) || "Not available"} sqft
-                  </span>
-                </div>
-              )}
-
-              {/* County */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>County:</label>
-                  <input
-                    type="text"
-                    value={propertyData.county || ""}
-                    onChange={(e) => handleChange("county", e.target.value)}
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <GrMapLocation size={25} color="#1F3E72" />
-                  <span>County: {propertyData?.county || "Not available"}</span>
-                </div>
-              )}
-
-              {/* Zoning */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>Zoning:</label>
-                  <input
-                    type="text"
-                    value={propertyData.zoning || ""}
-                    onChange={(e) => handleChange("zoning", e.target.value)}
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <TbMapCheck size={25} color="#1F3E72" />
-                  <span>Zoning: {propertyData?.zoning || "Not applicable"}</span>
-                </div>
-              )}
-
-              {/* Road Condition */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>Road Condition:</label>
-                  <input
-                    type="text"
-                    value={propertyData.roadCondition || ""}
-                    onChange={(e) =>
-                      handleChange("roadCondition", e.target.value)
-                    }
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <FaRoad size={25} color="#1F3E72" />
-                  <span>Road Condition: {propertyData?.roadCondition || "Unknown"}</span>
-                </div>
-              )}
-
-              {/* Mobile Homes */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>Mobile Homes OK?</label>
-                  <input
-                    type="checkbox"
-                    checked={propertyData.mobileHomeFriendly || false}
-                    onChange={(e) =>
-                      handleChange("mobileHomeFriendly", e.target.checked)
-                    }
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <FaTrailer size={25} color="#1F3E72" />
-                  <span>Mobile Homes: {propertyData?.mobileHomeFriendly ? "Yes" : "No"}</span>
-                </div>
-              )}
-
-              {/* Floodplain */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>Floodplain:</label>
-                  <input
-                    type="text"
-                    value={propertyData.floodplain || ""}
-                    onChange={(e) => handleChange("floodplain", e.target.value)}
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <RiFloodLine size={25} color="#1F3E72" />
-                  <span>Floodplain: {propertyData?.floodplain || "Not available"}</span>
-                </div>
-              )}
-
-              {/* HOA/POA */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>HOA/POA:</label>
-                  <input
-                    type="text"
-                    value={propertyData.hoaPoa || ""}
-                    onChange={(e) => handleChange("hoaPoa", e.target.value)}
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <MdOutlineHouseSiding size={25} color="#1F3E72" />
-                  <span>HOA/POA: {propertyData?.hoaPoa || "Not applicable"}</span>
-                </div>
-              )}
-
-              {/* Restrictions */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>Restrictions:</label>
-                  <input
-                    type="text"
-                    value={propertyData.restrictions || ""}
-                    onChange={(e) =>
-                      handleChange("restrictions", e.target.value)
-                    }
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <TbSmartHomeOff size={25} color="#1F3E72" />
-                  <span>Restrictions: {propertyData?.restrictions || "None"}</span>
-                </div>
-              )}
-
-              {/* New Field: Owner ID */}
-              {editMode && isAdmin ? (
-                <div className="flexStart feature">
-                  <label>Owner ID:</label>
-                  <input
-                    type="text"
-                    value={propertyData.ownerid || ""}
-                    onChange={(e) => handleChange("ownerId", e.target.value)}
-                  />
-                </div>
-              ) : (
-                <div className="flexStart feature">
-                  <span>Owner ID: {propertyData?.ownerid || "Not available"}</span>
-                </div>
-              )}
+            <div className="fact-item">
+              <h4>{propertyData.zoning}</h4>
+              <span>Zoning</span>
             </div>
 
-            {/* Description */}
-            <div className="flexStart feature">
-              {editMode && isAdmin ? (
-                <textarea
-                  rows={4}
-                  value={propertyData.description || ""}
-                  onChange={(e) => handleChange("description", e.target.value)}
-                />
-              ) : (
-                <span className="secondaryText" style={{ textAlign: "justify" }}>
-                  {propertyData?.description}
-                </span>
-              )}
+            <div className="fact-item">
+              <h4>{propertyData.area.toLocaleString()}</h4>
+              <span>Area</span>
             </div>
 
-            {/* If in edit mode and admin, show Save/Cancel */}
-            {editMode && isAdmin && (
-              <div style={{ marginTop: "1rem" }}>
-                <button
-                  className="button"
-                  style={{ marginRight: "1rem" }}
-                  onClick={handleSave}
-                >
-                  Save
-                </button>
-                <button className="button" onClick={() => setEditMode(false)}>
-                  Cancel
-                </button>
-              </div>
-            )}
-
-            {/* Offer Button (always visible) */}
-            {!editMode && !isAdmin && (
-              <button
-                className="button"
-                onClick={() =>
-                  navigate(`/properties/${propertyData?.id}/offer`, {
-                    state: { property: propertyData },
-                  })
-                }
-              >
-                Make Your Offer
-              </button>
-            )}
+            <div className="fact-item">
+              <h4>{propertyData.financing ? "Available" : "Not Available"}</h4>
+              <span>Financing</span>
+            </div>
           </div>
-          {/* Map Section */}
-          <div className="map">
-            <Map
-              address={propertyData?.address}
-              city={propertyData?.city}
-              state={propertyData?.state}
-            />
+
+          {/* Directions */}
+          <div className="property-category">
+            <h3>Directions</h3>
+            <p>
+              Located at {propertyData.streetaddress}, {propertyData.city},{" "}
+              {propertyData.state}. Use{" "}
+              <a
+                href={propertyData.landIdLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {propertyData.landIdLink}
+              </a>{" "}
+              for more details.
+            </p>
+          </div>
+
+          {/* Location */}
+          <div className="property-section">
+            <h3>Location</h3>
+            <ul>
+              <li>
+                Address: {propertyData.streetaddress}, {propertyData.city},{" "}
+                {propertyData.state} {propertyData.zip}
+              </li>
+              <li>County: {propertyData.county}</li>
+              <li>Area: {propertyData.area}</li>
+              <li>Parcels: {propertyData.apnOrPin}</li>
+              <li>
+                Coordinates: {propertyData.latitude}, {propertyData.longitude}
+              </li>
+            </ul>
+          </div>
+
+          {/* Property Details */}
+          <div className="property-section">
+            <h3>Property Details</h3>
+            <ul>
+              <li>Size: {propertyData.sqft.toLocaleString()} Square Feet</li>
+              <li>Acreage: {propertyData.acre.toLocaleString()}</li>
+              <li>Type: {propertyData.type}</li>
+              <li>Sub Type: {propertyData.subtype}</li>
+              <li>Owner-ID: {propertyData.ownerid} (Admin)</li>
+            </ul>
+          </div>
+          {/* Financial Information */}
+          <div className="property-section">
+            <h3>Financial Information</h3>
+            <ul>
+              <li>
+                Asking Price: ${propertyData.askingPrice.toLocaleString()}
+              </li>
+              <li>
+                Minimum Price: ${propertyData.minPrice.toLocaleString()} (Admin)
+              </li>
+              <li>
+                Discount Price: ${propertyData.disPrice.toLocaleString()}{" "}
+                (Admin)
+              </li>
+              <li>
+                Financing Available: {propertyData.financing ? "Yes" : "No"}
+              </li>
+            </ul>
+          </div>
+
+          {/* Additional Information */}
+          <div className="property-section">
+            <h3>Additional Information</h3>
+            <ul>
+              <li>
+                Mobile Home Friendly:{" "}
+                {propertyData.mobileHomeFriendly === "true" ? "Yes" : "No"}
+              </li>
+              <li>Area: {propertyData.area}</li>
+              <li></li>
+              <li>Notes: {propertyData.notes}</li>
+            </ul>
+          </div>
+          {/* Utilities & Infrastructure */}
+          <div className="property-section">
+            <h3>Utilities & Infrastructure</h3>
+            <ul>
+              <li>Water: {propertyData.water}</li>
+              <li>Sewer: {propertyData.sewer}</li>
+              <li>Electricity: {propertyData.electric}</li>
+              <li>Road Condition: {propertyData.roadCondition}</li>
+            </ul>
+          </div>
+
+          {/* HOA & Zoning */}
+          <div className="property-section">
+            <h3>HOA & Zoning</h3>
+            <ul>
+              <li>Zoning: {propertyData.zoning}</li>
+              <li>Restrictions: {propertyData.restrictions}</li>
+              <li>HOA/POA: {propertyData.hoaPoa}</li>
+              <li>HOA Info: {propertyData.hoaDeedDevInfo}</li>
+            </ul>
+          </div>
+          {/* Enviromental Risk*/}
+          <div className="property-section">
+            <h3>Environmental Risk</h3>
+            <ul>
+              <li>Floodplain: {propertyData.floodplain}</li>
+            </ul>
+          </div>
+          <div className="disclaimer-section">
+            <p>
+              Dear Visitor, Thank you for taking the time to review this information.
+              This is a broker price opinion or comparative market analysis and
+              should not be considered an appraisal or opinion of value. In
+              making any decision that relies upon our work, you should know
+              that we have not followed the guidelines for the development of an
+              appraisal or analysis contained in the Uniform Standards of
+              Professional Appraisal Practice of the Appraisal Foundation.
+              Always perform your due diligence to verify any numbers presented
+              before signing a contract to purchase. Landers Investment LLC has
+              an equitable interest in this property and does not claim to be
+              the owner. All properties are subject to errors, omissions, deletions,
+              additions, and cancellations. All properties are sold as is, where
+              is, with absolutely no representations written or oral. Buyer is
+              to do their own independent due diligence.The property will not be 
+              considered under contract until the signed contract and earnest money 
+              are received with all contingencies removed. Thank You! — The Landers Investment LLC Team
+            </p>
+            <p>
+              
+            </p>
+            <p>
+              
+            </p>
           </div>
         </div>
-        <div>
-          {/* Show all offers only if the user is an admin */}
-          {isAdmin && !editMode && (
-            <div className="offers-section">
-              <h3>All Offers for This Property</h3>
-
-              {/* Show loading message while fetching offers */}
-              {loadingOffers ? (
-                <p>Loading offers...</p>
-              ) : offers.length > 0 ? (
-                <ul className="offer-list">
-                  {/* Loop through and display each offer */}
-                  {offers.map((offer) => (
-                    <li key={offer.id} className="offer-item">
-                      <p>
-                        <strong>Buyer:</strong> {offer.buyer.firstName}{" "}
-                        {offer.buyer.lastName}
-                      </p>
-                      <p>
-                        <strong>Email:</strong> {offer.buyer.email}
-                      </p>
-                      <p>
-                        <strong>Phone:</strong> {offer.buyer.phone}
-                      </p>
-                      <p>
-                        <strong>Offered Price:</strong> $
-                        {formatPrice(offer.offeredPrice)}
-                      </p>
-                      <p>
-                        <strong>Date:</strong>{" "}
-                        {new Date(offer.timestamp).toLocaleDateString()}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                // If there are no offers, display a message
-                <p>No offers made yet.</p>
-              )}
-            </div>
-          )}
+        {/* Sticky Footer Section */}
+        <div className={`sticky-footer ${isSticky ? "sticky" : "static"}`}>
+          <button className="call-btn">
+            <FaPhoneAlt style={{ marginRight: "8px" }} />
+            Call
+          </button>
+          <button
+            className="offer-btn"
+            onClick={() =>
+              navigate(`/properties/${propertyData?.id}/offer`, {
+                state: { property: propertyData },
+              })
+            }
+          >
+            <FaHandshake style={{ marginRight: "8px" }} />
+            Make Offer
+          </button>
+          <button className="message-btn">
+            <FaEnvelope style={{ marginRight: "8px" }} />
+            Message
+          </button>
         </div>
       </div>
+
+      {/* Right Section */}
+      <div className="property-right">
+        {/* Status and Price */}
+        <div className="property-status">
+          <span className="status-dot"></span> {propertyData.status}
+        </div>
+        <h2 className="property-price">
+          ${propertyData.askingPrice.toLocaleString()}
+        </h2>
+        <h2 className="property-acres">{propertyData.acre} Acres</h2>
+
+        {/* Action Buttons */}
+        <div className="property-actions">
+          <button className="btn-share">Share</button>
+        </div>
+
+        {/* Image Gallery (Scrollable) */}
+        <div className="property-gallery-scroll">
+          {/* Example images; replace or map through image array if available */}
+          <img
+            src={`${serverURL}/${propertyData.image}`}
+            alt="Gallery Image 1"
+          />
+          <img
+            src={`${serverURL}/${propertyData.image}`}
+            alt="Gallery Image 2"
+          />
+          <img
+            src={`${serverURL}/${propertyData.image}`}
+            alt="Gallery Image 3"
+          />
+          <img
+            src={`${serverURL}/${propertyData.image}`}
+            alt="Gallery Image 4"
+          />
+          <img
+            src={`${serverURL}/${propertyData.image}`}
+            alt="Gallery Image 5"
+          />
+        </div>
+      </div>
+      {/* Sticky Footer Actions */}
     </div>
   );
 };

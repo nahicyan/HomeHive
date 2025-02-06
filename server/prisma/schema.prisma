@@ -27,42 +27,70 @@ enum Role {
 }
 
 model Residency {
-    id               String @id @default(auto()) @map("_id") @db.ObjectId
-    ownerid          Int
-    title            String
-    description      String
-    address          String
-    zip              String
-    city             String
-    county           String
-    state            String
-    image            String
-    askingPrice      Float
-    minPrice         Float
-    facilities       Json
-    userEmail        String
-    status           String
-    flyer            String
-    propertyAddress  String
-    apnOrPin         String
-    sqft             Int
-    acre             Float
-    zoning           String
-    utilities        Json
-    roadCondition    String
-    restrictions     String
-    mobileHomeFriendly Boolean
-    hoaPoa           String
-    floodplain       String
-    hoaDeedDevInfo   String?
-    notes            String?
-    owner            User @relation("Owner", fields: [userEmail], references: [email])
-    createdAt        DateTime @default(now())
-    updatedAt        DateTime @updatedAt
+    id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+    owner               User     @relation("Owner", fields: [userEmail], references: [email])
+    userEmail           String
 
-    @@unique(fields: [address, userEmail])
+    // Property Details
+    ownerid             Int
+    title               String
+    description         String?
+    type                String?
+    subtype             String?
+    zoning              String?
+    restrictions        String?
+    mobileHomeFriendly  String?
+    hoaPoa              String?
+    hoaDeedDevInfo      String?
+    notes               String?
 
+    // Address and Location
+    apnOrPin            String   @unique                      // APN/PIN must be unique
+    streetaddress       String
+    city                String
+    county              String
+    state               String
+    zip                 String
+    latitude            Float                              // Latitude for geolocation
+    longitude           Float                               // Longitude for geolocation
+    area                String
+    landIdLink          String?   @unique                     // Unique external link
+
+    // Physical Attributes
+    sqft                Int
+    acre                Float?
+    image               String?
+
+    // Pricing and Financing
+    askingPrice         Float
+    minPrice            Float
+    disPrice            Float?
+    financing           Boolean
+    status              String?
+
+    // Utilities and Infrastructure
+    water               String?
+    sewer               String?
+    electric            String?
+    roadCondition       String?
+    floodplain          String?
+
+    // Miscellaneous
+    ltag                String? 
+    rtag                String?   
+    landId              Boolean
+    viewCount           Int?      @default(0)                 // View count for unique views
+
+    // Timestamps
+    createdAt           DateTime @default(now())
+    updatedAt           DateTime @updatedAt
+
+    // Unique Constraints
+    @@unique(fields: [apnOrPin, streetaddress, city, state, userEmail])  // Prevent duplicate listings by the same user
+    @@unique(fields: [latitude, longitude])                              // Ensure no duplicate geolocations
 }
+
+
 
 model Offer {
     id          String   @id @default(auto()) @map("_id") @db.ObjectId

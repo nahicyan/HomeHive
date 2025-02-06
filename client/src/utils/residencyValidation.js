@@ -87,22 +87,6 @@ export function transformResidencyData(rawData) {
       );
     }
   
-    // 7) facilities, utilities => JSON
-    if (typeof data.facilities === "string") {
-      try {
-        data.facilities = JSON.parse(data.facilities);
-      } catch {
-        throw new Error("facilities must be valid JSON but received invalid string");
-      }
-    }
-    if (typeof data.utilities === "string") {
-      try {
-        data.utilities = JSON.parse(data.utilities);
-      } catch {
-        throw new Error("utilities must be valid JSON but received invalid string");
-      }
-    }
-  
     // Remove read-only fields
     delete data.id;
     delete data.createdAt;

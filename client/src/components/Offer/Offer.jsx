@@ -57,75 +57,75 @@ const Offer = () => {
   }
 
   return (
-    <div className="offer-container">
-      <h2>
-        Make an Offer for{" "}
-        <span style={{ color: "#FF8000" }}>{propertyData?.address}</span>
-      </h2>
+  <div className="offer-container">
+    <h2>
+      Make an Offer for{" "}
+      <span className="highlight">{propertyData?.streetaddress}</span>
+    </h2>
 
-      <form onSubmit={handleSubmit} className="offer-form">
-        <label>First Name:</label>
-        <input
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          required
-        />
+    <form onSubmit={handleSubmit} className="offer-form">
+      <input
+        type="text"
+        value={firstName}
+        onChange={(e) => setFirstName(e.target.value)}
+        placeholder="First Name"
+        required
+      />
 
-        <label>Last Name:</label>
-        <input
-          type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          required
-        />
+      <input
+        type="text"
+        value={lastName}
+        onChange={(e) => setLastName(e.target.value)}
+        placeholder="Last Name"
+        required
+      />
 
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+      />
 
-        <label>Phone:</label>
-        <input
-          type="text"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          required
-        />
+      <input
+        type="text"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+        placeholder="Phone"
+        required
+      />
 
-        <label>Buyer Type:</label>
-        <select
-          value={buyerType}
-          onChange={(e) => setBuyerType(e.target.value)}
-          required
-        >
-          <option value="">Select Buyer Type</option>
-          <option value="CashBuyer">Cash Buyer</option>
-          <option value="Builder">Builder</option>
-          <option value="Developer">Developer</option>
-          <option value="Realtor">Realtor</option>
-          <option value="Investor">Investor</option>
-          <option value="Wholesaler">Wholesaler</option>
-        </select>
+      <select
+        value={buyerType}
+        onChange={(e) => setBuyerType(e.target.value)}
+        required
+      >
+        <option value="">Select Buyer Type</option>
+        <option value="CashBuyer">Cash Buyer</option>
+        <option value="Builder">Builder</option>
+        <option value="Developer">Developer</option>
+        <option value="Realtor">Realtor</option>
+        <option value="Investor">Investor</option>
+        <option value="Wholesaler">Wholesaler</option>
+      </select>
 
-        <label>Offer Price ($):</label>
-        <input
-          type="number"
-          value={offerPrice}
-          onChange={(e) => setOfferPrice(e.target.value)}
-          min="1"
-          required
-        />
+      <input
+        type="number"
+        value={offerPrice}
+        onChange={(e) => setOfferPrice(e.target.value)}
+        placeholder="Offer Price ($)"
+        min="1"
+        required
+      />
 
-        <button type="submit" className="button">
-          Submit Offer
-        </button>
-      </form>
-    </div>
-  );
+      <button type="submit" className="offer-button">
+        Submit Offer
+      </button>
+    </form>
+  </div>
+);
+
 };
 
 export default Offer;
