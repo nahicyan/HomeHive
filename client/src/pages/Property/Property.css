@@ -66,17 +66,27 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* Main Container */
-.property-container {
-  display: flex;
+.root-container {
   justify-content: space-between;
   gap: 40px; /* Reduced from 50px */
-  max-width: 1100px; /* Slightly narrower for compact look */
+  max-width: 1900px; /* Slightly narrower for compact look */
   margin: 50px auto;
   padding: 35px;
   background: #ffffff;
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Main Container */
+.property-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px; /* Reduced from 50px */
+  max-width: 1900px; /* Slightly narrower for compact look */
+  margin: 50px auto;
+  padding: 35px;
+  background: #ffffff;
+  border-radius: 18px;
 }
 
 /* Left Section */
@@ -226,17 +236,17 @@ body {
 }
 
 /* Section Headers - Add Thin Line */
-.property-section h3,
-.property-category h3,
-.property-details-section h3,
-.property-left h3 {
-  font-size: 18px; /* Slightly smaller */
-  font-weight: 400;
-  color: #1d1d1f;
-  margin-bottom: 12px; /* Reduced from 15px */
-  padding-bottom: 6px; /* Reduced from 8px */
-  border-bottom: 0.5px solid #dcdce0;
-}
+  .property-section h3,
+  .property-category h3,
+  .property-details-section h3,
+  .property-left h3 {
+    font-size: 18px; /* Slightly smaller */
+    font-weight: 400;
+    color: #1d1d1f;
+    margin-bottom: 12px; /* Reduced from 15px */
+    padding-bottom: 6px; /* Reduced from 8px */
+    border-bottom: 0.5px solid #dcdce0;
+  }
 
 /* Section List Styling */
 .property-section ul,
