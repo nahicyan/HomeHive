@@ -11,23 +11,13 @@ import {
   getPropertyOffers,
 } from "../../utils/api"; // Import updateProperty
 import { PuffLoader } from "react-spinners";
-import { AiFillStar } from "react-icons/ai";
 import "./Property.css";
-import { TbMapCheck } from "react-icons/tb";
-import { FaRoad } from "react-icons/fa";
-import { FaTrailer } from "react-icons/fa";
-import { RiFloodLine } from "react-icons/ri";
-import { MdOutlineHouseSiding } from "react-icons/md";
-import { TbSmartHomeOff } from "react-icons/tb";
-import { PiResizeLight } from "react-icons/pi";
-import { MdLocationOn } from "react-icons/md";
 import { formatPrice } from "../../utils/format";
-import { GrMapLocation } from "react-icons/gr";
 import Map from "../../components/Map/Map";
-import { FaMagnifyingGlassLocation } from "react-icons/fa6";
 import { UserContext } from "../../utils/UserContext";
 import { transformResidencyData } from "../../utils/residencyValidation";
-import { FaPhoneAlt, FaEnvelope, FaHandshake } from "react-icons/fa";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 
 // 1) Retrieve server URL from environment variable, fallback to local
 const serverURL = import.meta.env.VITE_SERVER_URL;
@@ -115,6 +105,12 @@ const Property = () => {
     }
   };
 
+  // Render Rich Text
+
+  const renderRichText = (htmlContent) => {
+    return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+  };
+
   // Sticky Footer Logic
   useEffect(() => {
     const handleScroll = () => {
@@ -199,10 +195,6 @@ const Property = () => {
           </div>
           {/* Description */}
           <Box mt={3}>
-            <Typography variant="h6" fontWeight="bold">
-              Description
-            </Typography>
-
             <Typography
               variant="body1"
               color="text.secondary"
@@ -218,7 +210,7 @@ const Property = () => {
                 overflow: "hidden",
               }}
             >
-              {propertyData.description}
+              {renderRichText(propertyData.description)}
             </Typography>
 
             {/* Show More / Show Less Button */}
@@ -290,7 +282,7 @@ const Property = () => {
           </div>
         </div>
       </div>
-      
+
       <div>
         <div className="property-details-section">
           {/* Quick Facts */}
@@ -309,16 +301,25 @@ const Property = () => {
 
             <Grid2 container spacing={2}>
               <Grid2 item xs={6} sm={3}>
-                <FactCard title="Sq Feet" value={propertyData.sqft.toLocaleString()} />
+                <FactCard
+                  title="Sq Feet"
+                  value={propertyData.sqft.toLocaleString()}
+                />
               </Grid2>
               <Grid2 item xs={6} sm={3}>
                 <FactCard title="Zoning" value={propertyData.zoning} />
               </Grid2>
               <Grid2 item xs={6} sm={3}>
-                <FactCard title="Area" value={propertyData.area.toLocaleString()} />
+                <FactCard
+                  title="Area"
+                  value={propertyData.area.toLocaleString()}
+                />
               </Grid2>
               <Grid2 item xs={6} sm={3}>
-                <FactCard title="Financing" value={propertyData.financing ? "Available" : "Not Available"} />
+                <FactCard
+                  title="Financing"
+                  value={propertyData.financing ? "Available" : "Not Available"}
+                />
               </Grid2>
             </Grid2>
           </Box>
@@ -342,7 +343,7 @@ const Property = () => {
                 <DetailCard
                   title="Directions"
                   items={[
-                    `Located at ${propertyData.streetaddress}, ${propertyData.city}, ${propertyData.state}`,
+                    `${propertyData.direction}`,
                     <a
                       href={propertyData.landIdLink}
                       target="_blank"
@@ -388,7 +389,9 @@ const Property = () => {
                     `Asking Price: $${propertyData.askingPrice.toLocaleString()}`,
                     `Minimum Price: $${propertyData.minPrice.toLocaleString()} (Admin)`,
                     `Discount Price: $${propertyData.disPrice.toLocaleString()} (Admin)`,
-                    `Financing Available: ${propertyData.financing ? "Yes" : "No"}`,
+                    `Financing Available: ${
+                      propertyData.financing ? "Yes" : "No"
+                    }`,
                   ]}
                 />
               </Grid2>
@@ -401,7 +404,6 @@ const Property = () => {
                       propertyData.mobileHomeFriendly === "true" ? "Yes" : "No"
                     }`,
                     `Area: ${propertyData.area}`,
-                    `Notes: ${propertyData.notes}`,
                   ]}
                 />
               </Grid2>
@@ -438,34 +440,38 @@ const Property = () => {
               </Grid2>
             </Grid2>
           </Box>
+          <Box mt={3}>
+            <Typography variant="h6" fontWeight="bold">
+              Notes
+            </Typography>
+            {renderRichText(propertyData.notes)}
+          </Box>
           <div className="disclaimer-section">
             <p>
-              Dear Visitor, Thank you for taking the time to review this information.
-              This is a broker price opinion or comparative market analysis and
-              should not be considered an appraisal or opinion of value. In
-              making any decision that relies upon our work, you should know
-              that we have not followed the guidelines for the development of an
-              appraisal or analysis contained in the Uniform Standards of
-              Professional Appraisal Practice of the Appraisal Foundation.
-              Always perform your due diligence to verify any numbers presented
-              before signing a contract to purchase. Landers Investment LLC has
-              an equitable interest in this property and does not claim to be
-              the owner. All properties are subject to errors, omissions, deletions,
-              additions, and cancellations. All properties are sold as is, where
-              is, with absolutely no representations written or oral. Buyer is
-              to do their own independent due diligence.The property will not be 
-              considered under contract until the signed contract and earnest money 
-              are received with all contingencies removed. Thank You! — The Landers Investment LLC Team
+              Dear Visitor, Thank you for taking the time to review this
+              information. This is a broker price opinion or comparative market
+              analysis and should not be considered an appraisal or opinion of
+              value. In making any decision that relies upon our work, you
+              should know that we have not followed the guidelines for the
+              development of an appraisal or analysis contained in the Uniform
+              Standards of Professional Appraisal Practice of the Appraisal
+              Foundation. Always perform your due diligence to verify any
+              numbers presented before signing a contract to purchase. Landers
+              Investment LLC has an equitable interest in this property and does
+              not claim to be the owner. All properties are subject to errors,
+              omissions, deletions, additions, and cancellations. All properties
+              are sold as is, where is, with absolutely no representations
+              written or oral. Buyer is to do their own independent due
+              diligence.The property will not be considered under contract until
+              the signed contract and earnest money are received with all
+              contingencies removed. Thank You! — The Landers Investment LLC
+              Team
             </p>
-            <p>
-              
-            </p>
-            <p>
-              
-            </p>
+            <p></p>
+            <p></p>
           </div>
         </div>
-        
+
         <FloatingButtons propertyData={propertyData} />
       </div>
       {/* Sticky Footer Actions */}

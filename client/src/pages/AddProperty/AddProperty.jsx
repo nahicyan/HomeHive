@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AddProperty.css"
+import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill';
+
+
 
 const serverURL = import.meta.env.VITE_SERVER_URL;
 
@@ -14,6 +18,7 @@ const AddProperty = () => {
     area: "",
     title: "",
     description: "",
+    direction: "",
     type: "",
     subtype: "",
     zoning: "",
@@ -48,6 +53,13 @@ const AddProperty = () => {
     ltag: "",
     rtag: "",
   });
+
+  const handleQuillChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -105,11 +117,12 @@ const AddProperty = () => {
           <InputField label="User Email (Owner)" name="userEmail" value={formData.userEmail} onChange={handleChange} required />
           <InputField label="Area" name="area" value={formData.area} onChange={handleChange} required />
         </div>
-
         <h3>Property Details</h3>
         <div className="form-row">
           <InputField label="Title" name="title" value={formData.title} onChange={handleChange} required />
-          <InputField label="Description" name="description" value={formData.description} onChange={handleChange} />
+          <h3>Property Details</h3>
+          <div className="form-row"> <label>Description</label> <ReactQuill value={formData.description} onChange={(value) => handleQuillChange('description', value)} /></div>
+          <InputField label="Direction" name="direction" value={formData.direction} onChange={handleChange} />
           <InputField label="Type" name="type" value={formData.type} onChange={handleChange} />
           <InputField label="Sub Type" name="subtype" value={formData.subtype} onChange={handleChange} />
           <InputField label="Zoning" name="zoning" value={formData.zoning} onChange={handleChange} />
@@ -117,7 +130,7 @@ const AddProperty = () => {
           <InputField label="Mobile Home Friendly" name="mobileHomeFriendly" value={formData.mobileHomeFriendly} onChange={handleChange} required type="select" options={["No", "Yes"]} />
           <InputField label="HOA / POA" name="hoaPoa" value={formData.hoaPoa} onChange={handleChange} />
           <InputField label="HOA / Deed / Development Info" name="hoaDeedDevInfo" value={formData.hoaDeedDevInfo} onChange={handleChange} />
-          <InputField label="Notes" name="notes" value={formData.notes} onChange={handleChange} />
+          <div className="form-row"><label>Notes</label><ReactQuill value={formData.notes} onChange={(value) => handleQuillChange('notes', value)}/> </div>
         </div>
         <h3>Location</h3>
         <div className="form-row">
