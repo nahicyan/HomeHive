@@ -49,7 +49,7 @@ const AddProperty = () => {
     rtag: "",
   });
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,8 +59,9 @@ const AddProperty = () => {
     }));
   };
 
+  // Handle file selection for multiple images
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+    setSelectedFiles([...e.target.files]); // Store multiple selected files
   };
 
   const handleSubmit = async (e) => {
@@ -70,12 +71,14 @@ const AddProperty = () => {
       for (let key in formData) {
         multipartForm.append(key, formData[key]);
       }
-      if (selectedFile) {
-        multipartForm.append("image", selectedFile);
-      }
+
+      // Append each selected file to FormData
+      selectedFiles.forEach((file) => {
+        multipartForm.append("images", file);
+      });
 
       const response = await axios.post(
-        `${serverURL}/api/residency/createWithFile`,
+        `${serverURL}/api/residency/createWithFile`, // Backend endpoint for multiple images
         multipartForm,
         {
           headers: {
@@ -87,6 +90,7 @@ const AddProperty = () => {
       alert("Property Added Successfully!");
       navigate("/properties");
     } catch (error) {
+      console.error("Error creating property:", error);
       alert("Failed to create property");
     }
   };
@@ -144,7 +148,21 @@ const AddProperty = () => {
         <div className="form-row">
           <InputField label="Square Footage (sqft)" name="sqft" value={formData.sqft} onChange={handleChange} required type="number" />
           <InputField label="Acre" name="acre" value={formData.acre} onChange={handleChange} type="number" />
-          <InputField label="Image Upload" name="image" onChange={handleFileChange} type="file" />
+          <h3>Image Upload</h3>
+          <div className="form-row">
+            <InputField label="Upload Images" name="images" onChange={handleFileChange} type="file" multiple />
+            <div className="selected-files">
+              {selectedFiles.length > 0 ? (
+                selectedFiles.map((file, index) => (
+                  <p key={index} className="file-name">
+                    {file.name}
+                  </p>
+                ))
+              ) : (
+                <p>No files selected.</p>
+              )}
+            </div>
+          </div>
         </div>
 
         <h3>Pricing and Financing</h3>
@@ -178,47 +196,26 @@ const AddProperty = () => {
   );
 };
 
-const InputField = ({ label, name, value, onChange, required = false, type = "text", options = [] }) => {
+const InputField = ({ label, name, value, onChange, required = false, type = "text", multiple = false }) => {
   if (type === "file") {
     return (
-      <div className="input-group file-upload-container">
-        <label>{label}{required && <span className="required">*</span>}</label>
-
-        {/* Hidden File Input */}
-        <input 
-          type="file" 
-          id={name} 
-          name={name} 
-          className="file-upload-input" 
-          onChange={(e) => {
-            onChange(e); 
-            const fileName = e.target.files[0] ? e.target.files[0].name : "No file chosen";
-            document.getElementById(`${name}-name`).textContent = fileName;
-          }} 
-          required={required}
-        />
-        
-        {/* Custom Styled Upload Button */}
-        <label htmlFor={name} className="file-upload-label">Choose an Image</label>
-        
-        {/* Display Selected File Name */}
-        <span id={`${name}-name`} className="file-upload-name">No file chosen</span>
+      <div className="input-group">
+        <label>
+          {label}
+          {required && <span className="required">*</span>}
+        </label>
+        <input type="file" name={name} onChange={onChange} multiple={multiple} />
       </div>
     );
   }
 
   return (
     <div className="input-group">
-      <label>{label}{required && <span className="required">*</span>}</label>
-      {type === "select" ? (
-        <select name={name} value={value} onChange={onChange} required={required}>
-          {options.map(option => <option key={option} value={option}>{option}</option>)}
-        </select>
-      ) : type === "textarea" ? (
-        <textarea name={name} value={value} onChange={onChange} required={required} />
-      ) : (
-        <input type={type} name={name} value={value} onChange={onChange} required={required} />
-      )}
+      <label>
+        {label}
+        {required && <span className="required">*</span>}
+      </label>
+      <input type={type} name={name} value={value} onChange={onChange} required={required} />
     </div>
   );
 };

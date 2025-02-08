@@ -247,56 +247,35 @@ export const updateResidency = asyncHandler(async (req, res) => {
 });
 
 
-export const getResidencyImage = asyncHandler(async (req, res) => {
+export const getResidencyImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log("Triggered Image")
 
-  // 1) Find the property record
   const residency = await prisma.residency.findUnique({
     where: { id },
   });
 
-  // 2) If not found or no image, return 404
-  if (!residency) {
-    return res.status(404).json({ message: "Residency not found" });
-  }
-  if (!residency.image) {
-    return res.status(404).json({ message: "No image path found in this property" });
+  if (!residency || !residency.image) {
+    return res.status(404).json({ message: "No images found for this residency" });
   }
 
-  // 3) Convert backslashes to forward slashes if necessary
-  // e.g. "uploads\\land1.jpg" => "uploads/land1.jpg"
-  const normalizedPath = residency.image.replace(/\\/g, "/");
+  // Parse image array from JSON string
+  const imagePaths = JSON.parse(residency.image);
 
-  // 4) Construct absolute path
-  // e.g. if you store uploads in <projectRoot>/uploads
-  // Adjust __dirname logic if using ES modules
-  const absolutePath = path.join(process.cwd(), normalizedPath);
-
-  // 5) Check if file exists
-  if (!fs.existsSync(absolutePath)) {
-    return res.status(404).json({ message: "File not found on server" });
-  }
-
-  // 6) Stream the file back
-  res.sendFile(absolutePath, (err) => {
-    if (err) {
-      console.error("Error sending image file:", err);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error sending image file" });
-      }
-    }
+  res.status(200).json({
+    message: "Images retrieved successfully",
+    images: imagePaths,
   });
 });
 
 
 
-export const createResidencyWithFile = asyncHandler(async (req, res) => {
+
+export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) => {
   try {
-    // Check if a file was uploaded
-    let savedFilePath = null;
-    if (req.file) {
-      savedFilePath = "uploads/" + req.file.filename; // Assuming the upload folder is 'uploads'
+    // Collect all uploaded file paths
+    let imagePaths = [];
+    if (req.files && req.files.length > 0) {
+      imagePaths = req.files.map((file) => "uploads/" + file.filename);
     }
 
     // Destructure the fields from req.body
@@ -315,8 +294,6 @@ export const createResidencyWithFile = asyncHandler(async (req, res) => {
       hoaPoa,
       hoaDeedDevInfo,
       notes,
-
-      // Address and Location
       streetaddress,
       city,
       county,
@@ -326,39 +303,25 @@ export const createResidencyWithFile = asyncHandler(async (req, res) => {
       longitude,
       area,
       landIdLink,
-
-      // Physical Attributes
       sqft,
       acre,
-
-      // Pricing and Financing
       disPrice,
       financing,
       status,
-
-      // Utilities and Infrastructure
       water,
       sewer,
       electric,
       roadCondition,
       floodplain,
-
-      // Miscellaneous
       ltag,
       rtag,
       landId,
-
-      // User Information
       userEmail,
     } = req.body;
 
-    // Final image path from either upload or provided image URL
-    const finalImagePath = savedFilePath || (req.body.image || "");
-
-    // Convert userEmail to lowercase for consistency
     const lowerCaseEmail = userEmail.toLowerCase();
 
-    // Check if the user exists
+    // Check if user exists
     const user = await prisma.user.findUnique({
       where: { email: lowerCaseEmail },
     });
@@ -366,30 +329,7 @@ export const createResidencyWithFile = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Check for existing property to enforce unique constraints
-    const existingProperty = await prisma.residency.findFirst({
-      where: {
-        OR: [
-          { apnOrPin },
-          { 
-            streetaddress, 
-            city, 
-            state, 
-            userEmail: lowerCaseEmail 
-          },
-          { 
-            latitude: parseFloat(latitude), 
-            longitude: parseFloat(longitude) 
-          },
-        ],
-      },
-    });
-
-    if (existingProperty) {
-      return res.status(400).json({ message: "This property already exists in the system." });
-    }
-
-    // Create the residency in the database
+    // Create the residency with the array of image paths
     const residency = await prisma.residency.create({
       data: {
         ownerid: parseInt(ownerid),
@@ -406,8 +346,6 @@ export const createResidencyWithFile = asyncHandler(async (req, res) => {
         hoaPoa: hoaPoa ?? null,
         hoaDeedDevInfo: hoaDeedDevInfo ?? null,
         notes: notes ?? null,
-
-        // Address and Location
         streetaddress,
         city,
         county,
@@ -417,30 +355,20 @@ export const createResidencyWithFile = asyncHandler(async (req, res) => {
         longitude: longitude ? parseFloat(longitude) : null,
         area: area ?? null,
         landIdLink: landIdLink ?? null,
-
-        // Physical Attributes
         sqft: parseInt(sqft),
         acre: acre ? parseFloat(acre) : null,
-        image: finalImagePath,
-
-        // Pricing and Financing
+        image: imagePaths.length > 0 ? JSON.stringify(imagePaths) : null, // Store as JSON array
         disPrice: disPrice ? parseFloat(disPrice) : null,
         financing: financing === "false",
         status: status ?? "Available",
-
-        // Utilities and Infrastructure
         water: water ?? null,
         sewer: sewer ?? null,
         electric: electric ?? null,
         roadCondition: roadCondition ?? null,
         floodplain: floodplain ?? null,
-
-        // Miscellaneous
         ltag: ltag ?? null,
         rtag: rtag ?? null,
         landId: landId === "false",
-
-        // Relate to the user
         owner: {
           connect: { email: lowerCaseEmail },
         },
@@ -448,15 +376,15 @@ export const createResidencyWithFile = asyncHandler(async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Property Added Successfully",
+      message: "Property added successfully",
       residency,
     });
-
   } catch (err) {
     console.error("Error creating residency:", err);
     res.status(500).json({ message: "An error occurred", error: err.message });
   }
 });
+
 
 
 
