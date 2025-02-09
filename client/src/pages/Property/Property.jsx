@@ -1,22 +1,18 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useQuery } from "react-query";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import PropertyLeftSection from "../../components/PropertyLeftSection/PropertyLeftSection";
 import PropertyRightSection from "../../components/PropertyRightSection/PropertyRightSection";
 import PropertyDetailsSection from "../../components/PropertyDetailsSection/PropertyDetailsSection";
 import FloatingButtons from "../../components/FloatingButtons/FloatingButtons";
-import { getProperty, getPropertyOffers, updateProperty } from "../../utils/api";
+import { getProperty } from "../../utils/api";
 import { UserContext } from "../../utils/UserContext";
-
-const serverURL = import.meta.env.VITE_SERVER_URL;
 
 const Property = () => {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const contentRef = useRef(null);
   const [isSticky, setIsSticky] = useState(true);
-  const [firstImageUrl, setFirstImageUrl] = useState(null);
   const [propertyData, setPropertyData] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const { currentUser } = useContext(UserContext);
@@ -25,7 +21,7 @@ const Property = () => {
   const propertyId = pathname.split("/").slice(-1)[0];
 
   // Fetch property data using React Query
-  const { data, isLoading, isError, refetch } = useQuery(
+  const { data, isLoading, isError } = useQuery(
     ["resd", propertyId],
     () => getProperty(propertyId),
     { retry: 1, refetchOnWindowFocus: false }
@@ -34,12 +30,6 @@ const Property = () => {
   useEffect(() => {
     if (data) {
       setPropertyData(data);
-      try {
-        const images = JSON.parse(data.image);
-        if (images.length > 0) setFirstImageUrl(images[0]);
-      } catch (error) {
-        console.error("Failed to parse image data:", error);
-      }
     }
   }, [data]);
 
@@ -50,13 +40,14 @@ const Property = () => {
       const windowHeight = window.innerHeight;
       setIsSticky(contentBottom > windowHeight);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   if (isLoading) {
     return (
-      <Box className="wrapper" display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <CircularProgress />
       </Box>
     );
@@ -64,7 +55,7 @@ const Property = () => {
 
   if (isError) {
     return (
-      <Box className="wrapper" display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <Typography variant="h6" color="error">
           Error while fetching the property details. Please try again.
         </Typography>
@@ -74,7 +65,7 @@ const Property = () => {
 
   if (!propertyData) {
     return (
-      <Box className="wrapper" display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <Typography variant="h6">No property data available.</Typography>
       </Box>
     );
@@ -96,8 +87,6 @@ const Property = () => {
         {/* Left Section */}
         <PropertyLeftSection
           propertyData={propertyData}
-          firstImageUrl={firstImageUrl}
-          serverURL={serverURL}
           expanded={expanded}
           setExpanded={setExpanded}
         />

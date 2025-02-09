@@ -68,43 +68,6 @@ const PropertyRightSection = ({ propertyData }) => {
           Share
         </Button>
       </Box>
-
-      {/* Image Gallery (Scrollable) */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 1.5,
-          maxHeight: "380px",
-          overflowY: "auto",
-          scrollbarWidth: "thin",
-          scrollbarColor: "#c0c0c5 #f1f1f3",
-        }}
-      >
-        {imageUrls.length > 0 ? (
-          imageUrls.map((imageUrl, index) => (
-            <Box
-              key={index}
-              component="img"
-              src={`${serverURL}/${imageUrl}`}
-              alt={`Gallery Image ${index + 1}`}
-              sx={{
-                width: "100%",
-                height: "180px",
-                borderRadius: "10px",
-                objectFit: "cover",
-                boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s ease",
-                "&:hover": { transform: "scale(1.02)" },
-              }}
-            />
-          ))
-        ) : (
-          <Typography variant="body2" sx={{ color: "#999" }}>
-            No images available.
-          </Typography>
-        )}
-      </Box>
     </Box>
   );
 };

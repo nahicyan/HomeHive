@@ -1,18 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Chip, Button } from "@mui/material";
+import AnimatedCards from "../AnimatedCards/AnimatedCards";
 
-const PropertyLeftSection = ({
-  propertyData,
-  firstImageUrl,
-  serverURL,
-  expanded,
-  setExpanded,
-  MAX_LINES,
-}) => {
+const PropertyLeftSection = ({ propertyData, expanded, setExpanded, MAX_LINES = 4 }) => {
+  const [imageCards, setImageCards] = useState([]);
+
+  useEffect(() => {
+    if (propertyData?.image) {
+      try {
+        const images = JSON.parse(propertyData.image);
+        const cardsData = images.map((image, index) => ({
+          image: `${import.meta.env.VITE_SERVER_URL}/${image}`,
+          title: `Image ${index + 1}`, // Example title for each image
+          description: `This is image ${index + 1} description.`,
+        }));
+        setImageCards(cardsData);
+      } catch (error) {
+        console.error("Failed to parse image data:", error);
+      }
+    }
+  }, [propertyData]);
+
   return (
-    <Box sx={{
-      flex: 2,
-    }}>
+    <Box sx={{ flex: 4 }}>
       <Box sx={{ marginBottom: "20px", display: "flex", flexWrap: "wrap" }}>
         <Chip
           label={propertyData.ltag}
@@ -24,13 +34,10 @@ const PropertyLeftSection = ({
             textTransform: "uppercase",
             padding: "8px 18px",
             borderRadius: "50px",
-            letterSpacing: "1.2px",
             marginRight: "12px",
-            transition: "all 0.3s ease",
             "&:hover": {
               backgroundColor: "transparent",
               color: "#FF6F00",
-              transform: "translateY(-3px)",
               boxShadow: "0 5px 15px rgba(255, 111, 0, 0.3)",
             },
           }}
@@ -42,16 +49,12 @@ const PropertyLeftSection = ({
             color: "#ffffff",
             fontSize: "14px",
             fontWeight: 600,
-            textTransform: "uppercase",
             padding: "8px 18px",
             borderRadius: "50px",
-            letterSpacing: "1.2px",
             marginRight: "12px",
-            transition: "all 0.3s ease",
             "&:hover": {
               backgroundColor: "transparent",
               color: "#0071E3",
-              transform: "translateY(-3px)",
               boxShadow: "0 5px 15px rgba(0, 113, 227, 0.3)",
             },
           }}
@@ -63,17 +66,7 @@ const PropertyLeftSection = ({
             backgroundColor: "#f5f5f7",
             padding: "8px 14px",
             borderRadius: "20px",
-            fontWeight: 500,
-            boxShadow: "0 3px 10px rgba(0, 0, 0, 0.05)",
             marginLeft: "15px",
-            display: "inline-block",
-            transition: "all 0.3s ease",
-            "&:hover": {
-              backgroundColor: "#0071E3",
-              color: "#ffffff",
-              transform: "translateY(-3px)",
-              boxShadow: "0 5px 15px rgba(0, 113, 227, 0.2)",
-            },
           }}
         >
           Total Visitors: {propertyData.viewCount} (Admin)
@@ -87,7 +80,6 @@ const PropertyLeftSection = ({
           color: "#8e8e93",
           marginBottom: "10px",
           fontWeight: 300,
-          letterSpacing: "0.8px",
         }}
       >
         {propertyData.streetaddress}, {propertyData.city}, {propertyData.state} {propertyData.zip}
@@ -99,36 +91,15 @@ const PropertyLeftSection = ({
           fontWeight: 400,
           marginBottom: "25px",
           color: "#1d1d1f",
-          lineHeight: 1.3,
         }}
       >
         {propertyData.title}
       </Typography>
 
-      {/* Main Image */}
-      <Box
-        sx={{
-          width: "100%",
-          borderRadius: "14px",
-          overflow: "hidden",
-          marginBottom: "25px",
-          boxShadow: "0 6px 18px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Box
-          component="img"
-          src={firstImageUrl ? `${serverURL}/${firstImageUrl}` : "/default-image.jpg"}
-          alt={propertyData.title}
-          sx={{
-            width: "100%",
-            height: "auto",
-            borderRadius: "14px",
-            objectFit: "cover",
-          }}
-        />
-      </Box>
+      {/* Animated Image Gallery */}
+      <AnimatedCards cards={imageCards} />
 
-      {/* Description */}
+      {/* Description Section */}
       <Box mt={3}>
         <Typography variant="h6" fontWeight="bold">
           Description
@@ -140,8 +111,6 @@ const PropertyLeftSection = ({
             fontSize: "15px",
             lineHeight: 1.8,
             fontWeight: 300,
-            textAlign: "justify",
-            letterSpacing: "0.3px",
             display: "-webkit-box",
             WebkitLineClamp: expanded ? "unset" : MAX_LINES,
             WebkitBoxOrient: "vertical",
@@ -154,21 +123,12 @@ const PropertyLeftSection = ({
           variant="contained"
           onClick={() => setExpanded(!expanded)}
           sx={{
-            display: "inline-flex",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.8)", // 10% transparency
+            margin: "10px 0",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
             color: "#fff",
-            fontWeight: "bold",
             fontSize: "10px",
-            borderRadius: "50px",
             padding: "2px 15px",
-            margin: "10px 0px",
-            cursor: "pointer",
-            transition: "background-color 0.3s ease, opacity 0.3s ease",
-            textDecoration: "none",
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.4)", // 60% transparency on hover
-            },
+            "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.4)" },
           }}
         >
           {expanded ? "Show Less" : "Show More"}
