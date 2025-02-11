@@ -4,17 +4,15 @@ import { useLocation } from "react-router-dom";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import PropertyLeftSection from "../../components/PropertyLeftSection/PropertyLeftSection";
 import PropertyRightSection from "../../components/PropertyRightSection/PropertyRightSection";
-import PropertyDetailsSection from "../../components/PropertyDetailsSection/PropertyDetailsSection";
 import FloatingButtons from "../../components/FloatingButtons/FloatingButtons";
 import { getProperty } from "../../utils/api";
 import { UserContext } from "../../utils/UserContext";
 
 const Property = () => {
   const { pathname } = useLocation();
-  const contentRef = useRef(null);
-  const [isSticky, setIsSticky] = useState(true);
+  const leftSectionRef = useRef(null);
+  const rightSectionRef = useRef(null);
   const [propertyData, setPropertyData] = useState(null);
-  const [expanded, setExpanded] = useState(false);
   const { currentUser } = useContext(UserContext);
 
   // Extract property ID from the URL
@@ -33,16 +31,25 @@ const Property = () => {
     }
   }, [data]);
 
-  // Sticky Footer Logic
+  // **Fix: Scroll the left section when scrolling on the right**
   useEffect(() => {
-    const handleScroll = () => {
-      const contentBottom = contentRef.current.getBoundingClientRect().bottom;
-      const windowHeight = window.innerHeight;
-      setIsSticky(contentBottom > windowHeight);
+    const handleScrollRight = (event) => {
+      if (leftSectionRef.current) {
+        event.preventDefault(); // Stop the default scroll on right section
+        leftSectionRef.current.scrollTop += event.deltaY; // Scroll left section
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const rightSection = rightSectionRef.current;
+    if (rightSection) {
+      rightSection.addEventListener("wheel", handleScrollRight, { passive: false });
+    }
+
+    return () => {
+      if (rightSection) {
+        rightSection.removeEventListener("wheel", handleScrollRight);
+      }
+    };
   }, []);
 
   if (isLoading) {
@@ -80,26 +87,40 @@ const Property = () => {
         background: "#ffffff",
         borderRadius: "18px",
         boxShadow: "0 10px 30px rgba(0, 0, 0, 0.08)",
+        display: "flex",
+        gap: 4,
       }}
-      ref={contentRef}
     >
-      <Box display="flex" gap={4} sx={{ flexDirection: { xs: "column", md: "row" } }}>
-        {/* Left Section */}
-        <PropertyLeftSection
-          propertyData={propertyData}
-          expanded={expanded}
-          setExpanded={setExpanded}
-        />
+      {/* Left Section (Scrollable) */}
+      <Box
+        sx={{
+          flex: 3,
+          overflowY: "auto",
+          height: "80vh",
+          paddingRight: "20px",
+          scrollbarWidth: "none", // Hide scrollbar for Firefox
+          "&::-webkit-scrollbar": {
+            display: "none", // Hide scrollbar for Chrome, Safari, Edge
+          },
+        }}
+        ref={leftSectionRef}
+      >
+        <PropertyLeftSection propertyData={propertyData} />
+      </Box>
 
-        {/* Right Section */}
+      {/* Right Section (Sticky & Scrolls Left Section) */}
+      <Box
+        sx={{
+          flex: 1,
+          position: "sticky",
+          top: "20px",
+          height: "fit-content",
+          overflow: "hidden", // Prevents unwanted scrolling
+        }}
+        ref={rightSectionRef} // Reference for scrolling control
+      >
         <PropertyRightSection propertyData={propertyData} />
       </Box>
-
-      <Box mt={4}>
-        <PropertyDetailsSection propertyData={propertyData} />
-      </Box>
-
-      <FloatingButtons propertyData={propertyData} isSticky={isSticky} />
     </Box>
   );
 };

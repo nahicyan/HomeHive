@@ -210,3 +210,61 @@ a:hover {
     flex-direction: column;
   }
 }
+
+
+
+.rich-text-editor {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.rich-text-editor label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.ql-editor {
+  min-height: 150px; /* Ensures enough height for content */
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  padding: 8px;
+  background-color: #fdfdfd;
+}
+
+.ql-container {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.rich-text-editor .ql-toolbar {
+  border: 1px solid #e3e3e3;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+}
+
+
+.react-quill {
+  min-height: 200px;
+  width: 100%;
+}
+
+.react-quill .ql-container {
+  height: 200px;
+  border-radius: 12px;
+}
+
+.description-section,
+.notes-section {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.description-section h3,
+.notes-section h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 2px solid #002647;
+  padding-bottom: 5px;
+}

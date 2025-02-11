@@ -10,7 +10,7 @@ const AnimatedCards = ({ cards }) => {
         display: "flex",
         overflowX: "auto",
         scrollbarWidth: "thin",
-        padding: "50px 50px",
+         padding: "10px 20px 25px 0px",
         maxWidth: "80%",
         "&::-webkit-scrollbar": {
           height: "8px",
@@ -26,8 +26,8 @@ const AnimatedCards = ({ cards }) => {
           key={index}
           onClick={() => setActiveIndex(index)}
           sx={{
-            width: activeIndex === index ? "600px" : "80px",
-            height: "400px",
+            width: activeIndex === index ? "750px" : "80px",
+            height: "500px",
             borderRadius: "16px",
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -37,7 +37,7 @@ const AnimatedCards = ({ cards }) => {
             display: "flex",
             alignItems: "flex-end",
             transition: "width 0.6s cubic-bezier(0.28, -0.03, 0, 0.99)",
-            boxShadow: "0px 10px 30px -5px rgba(0, 0, 0, 0.8)",
+            boxShadow: "5px 10px 10px -5px rgba(0, 0, 0, 0.8)",
             backgroundImage: `url(${card.image})`,
           }}
         >

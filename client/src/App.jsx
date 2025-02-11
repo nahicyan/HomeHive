@@ -38,7 +38,6 @@ function App() {
             </Suspense>
           </BrowserRouter>
         </ThemeProvider>
-
         {/* Toast notifications container */}
         <ToastContainer />
 

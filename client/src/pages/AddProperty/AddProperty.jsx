@@ -5,8 +5,6 @@ import "./AddProperty.css"
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 
-
-
 const serverURL = import.meta.env.VITE_SERVER_URL;
 
 const AddProperty = () => {
@@ -66,8 +64,9 @@ const AddProperty = () => {
 
   // Handle file selection for multiple images
   const handleFileChange = (e) => {
-    setSelectedFiles([...e.target.files]); // Store multiple selected files
+    setSelectedFiles((prevFiles) => [...prevFiles, ...Array.from(e.target.files)]); 
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,6 +99,17 @@ const AddProperty = () => {
     }
   };
 
+
+   //React Quill
+
+   const handleQuillChange = (fieldName, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [fieldName]: value,  // Update only the specific field (e.g., description or notes)
+    }));
+  };
+  
+
   
 
   return (
@@ -115,10 +125,10 @@ const AddProperty = () => {
           <InputField label="Area" name="area" value={formData.area} onChange={handleChange} required />
         </div>
         <h3>Property Details</h3>
+          <div className="description-section"> <label>Description</label> <ReactQuill value={formData.description} onChange={(value) => handleQuillChange('description', value)} /></div>
+        <h3>Property Details</h3>
         <div className="form-row">
           <InputField label="Title" name="title" value={formData.title} onChange={handleChange} required />
-          <h3>Property Details</h3>
-          <div className="form-row"> <label>Description</label> <ReactQuill value={formData.description} onChange={(value) => handleQuillChange('description', value)} /></div>
           <InputField label="Direction" name="direction" value={formData.direction} onChange={handleChange} />
           <InputField label="Type" name="type" value={formData.type} onChange={handleChange} />
           <InputField label="Sub Type" name="subtype" value={formData.subtype} onChange={handleChange} />
@@ -127,8 +137,8 @@ const AddProperty = () => {
           <InputField label="Mobile Home Friendly" name="mobileHomeFriendly" value={formData.mobileHomeFriendly} onChange={handleChange} required type="select" options={["No", "Yes"]} />
           <InputField label="HOA / POA" name="hoaPoa" value={formData.hoaPoa} onChange={handleChange} />
           <InputField label="HOA / Deed / Development Info" name="hoaDeedDevInfo" value={formData.hoaDeedDevInfo} onChange={handleChange} />
-          <div className="form-row"><label>Notes</label><ReactQuill value={formData.notes} onChange={(value) => handleQuillChange('notes', value)}/> </div>
         </div>
+        <div className="notes-section"><label>Notes</label><ReactQuill value={formData.notes} onChange={(value) => handleQuillChange('notes', value)}/> </div>
         <h3>Location</h3>
         <div className="form-row">
           <InputField label="APN or PIN" name="apnOrPin" value={formData.apnOrPin} onChange={handleChange} required />
@@ -202,7 +212,7 @@ const AddProperty = () => {
   );
 };
 
-const InputField = ({ label, name, value, onChange, required = false, type = "text", multiple = false }) => {
+const InputField = ({ label, name, value, onChange, required = false, type = "text", multiple = false, options = [] }) => {
   if (type === "file") {
     return (
       <div className="input-group">
