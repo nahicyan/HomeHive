@@ -1,51 +1,52 @@
-import { Card, CardContent, Typography, List, ListItem } from "@mui/material";
+import React from "react";
+import { Box, Typography, Divider } from "@mui/material";
 
-const DetailCard = ({ title, items }) => {
+const DetailCard = ({ title, items, icon }) => {
   return (
-    <Card
-      elevation={3}
-      sx={{
-        backgroundColor: "#f9f9fb",
-        borderRadius: "10px",
-        padding: "18px 22px",
-        boxShadow: "0 3px 10px rgba(0, 0, 0, 0.05)",
-        border: "0.5px solid #e6e6ea",
-      }}
-    >
-      <CardContent>
-        <Typography
-          variant="h6"
-          fontWeight="400"
-          color="#1d1d1f"
+    <Box sx={{ mb: 4 }}>
+      {/* Header with Raised Effect */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center", // Ensures vertical alignment of icon and title
+          gap: 1,
+          mb: 2,
+          backgroundColor: "#f4f4f4",
+          borderRadius: "8px",
+          p: 1.5,
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Box sx={{ color: "#1976d2"}}>
+          {icon}
+        </Box>
+        <Typography 
+          variant="h6" 
           sx={{
-            marginBottom: "12px",
-            paddingBottom: "6px",
-            borderBottom: "0.5px solid #dcdce0",
+            fontSize: "20px",
+            color: "#000",
+            textTransform: "none",
+            lineHeight: "1.2", // Reduces extra space for tighter alignment
           }}
         >
           {title}
         </Typography>
-
-        <List sx={{ paddingLeft: 0 }}>
-          {items.map((item, index) => (
-            <ListItem
-              key={index}
-              sx={{
-                fontSize: "14px",
-                color: "#4a4a4a",
-                marginBottom: "5px",
-                lineHeight: 1.7,
-                fontWeight: 300,
-                display: "list-item", // Ensures proper list styling
-                listStyleType: "none",
-              }}
-            >
-              {item}
-            </ListItem>
-          ))}
-        </List>
-      </CardContent>
-    </Card>
+      </Box>
+        {items.map((item, index) => (
+          <Typography
+            component="li"
+            key={index}
+            sx={{
+              fontSize: "18px", 
+              color: "#404040",
+              lineHeight: 1.6,
+              mb: 0.5,
+            }}
+          >
+            {item}
+          </Typography>
+        ))}
+    </Box>
   );
 };
 

@@ -4,11 +4,11 @@ import { api } from "../../utils/api";
 import { toast } from "react-toastify";
 import "./Offer.css";
 
-const Offer = () => {
-  const location = useLocation();
+const Offer = ({ propertyData }) => {
+  if (!propertyData) {
+    return <div className="wrapper">Error: Property data not found.</div>;
+  }
   const navigate = useNavigate();
-  const propertyData = location.state?.property || null;
-
   const [offerPrice, setOfferPrice] = useState("");
   const [buyerType, setBuyerType] = useState("EndBuyer");
   const [firstName, setFirstName] = useState("");
@@ -59,8 +59,7 @@ const Offer = () => {
   return (
   <div className="offer-container">
     <h2>
-      Make an Offer for{" "}
-      <span className="highlight">{propertyData?.streetaddress}</span>
+      Make An Offer For This Property
     </h2>
 
     <form onSubmit={handleSubmit} className="offer-form">
