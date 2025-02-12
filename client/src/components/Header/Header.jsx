@@ -1,29 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import "./Header.css";
 import { BiMenuAltRight } from "react-icons/bi";
 import OutsideClickHandler from "react-outside-click-handler";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { loginUser } from "../../utils/api";
+import { checkSession, loginUser, logoutUser } from "../../utils/api"; // Import logoutUser
 import { UserContext } from "../../utils/UserContext";
-import LoginModal from "../LoginModal/LoginModal"; // Adjust the path as necessary
-
-// Utility to get and set cookies
-const setCookie = (name, value, days = 7) => {
-  const date = new Date();
-  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-  const expires = `expires=${date.toUTCString()}`;
-  document.cookie = `${name}=${value};${expires};path=/`;
-};
-
-const getCookie = (name) => {
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  if (match) return match[2];
-  return null;
-};
-
-const deleteCookie = (name) => {
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-};
+import LoginModal from "../LoginModal/LoginModal";
+import "./Header.css";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -32,17 +14,23 @@ const Header = () => {
   const [menuOpened, setMenuOpened] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // Load user from cookie on mount
+  // Check session on component mount
   useEffect(() => {
-    const userCookie = getCookie("loggedInUser");
-    if (userCookie) {
+    const checkUserSession = async () => {
       try {
-        const parsedUser = JSON.parse(decodeURIComponent(userCookie));
-        setCurrentUser(parsedUser);
-      } catch (err) {
-        console.error("Error parsing user cookie:", err);
+        const response = await checkSession();
+        if (response.user) {
+          console.log("Session active:", response.user);
+          setCurrentUser(response.user);
+        } else {
+          console.log("No active session");
+        }
+      } catch (error) {
+        console.error("Session check failed:", error);
       }
-    }
+    };
+
+    checkUserSession();
   }, [setCurrentUser]);
 
   // Style for mobile menu
@@ -53,51 +41,53 @@ const Header = () => {
     return {};
   };
 
-  // Callback function to handle login data from the modal
+  // Handle user login
   const handleLoginData = async ({ email, password }) => {
     try {
       const data = await loginUser({ email, password });
-      console.log("Login Success:", data);
+      console.log("Login successful:", data);
       if (data.user) {
         setCurrentUser(data.user);
-        setCookie("loggedInUser", encodeURIComponent(JSON.stringify(data.user)));
       }
       setShowLoginModal(false);
     } catch (err) {
-      console.error("Login Error:", err);
+      console.error("Login failed:", err);
     }
   };
 
-  // Logout
-  const handleLogout = () => {
-    setCurrentUser(null);
-    deleteCookie("loggedInUser");
+  // Handle logout using the imported logoutUser function
+  const handleLogout = async () => {
+    try {
+      const response = await logoutUser();
+      console.log("Logout response:", response);
+      setCurrentUser(null);
+      window.location.href = "/"; // Redirect to homepage manually
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
+  
 
-  // Button label
+  // Determine the button label
   const getButtonLabel = () => {
     if (!currentUser) return "Login";
-    if (currentUser.role === "ADMIN") {
-      return `Welcome ${currentUser.name}!`;
-    }
-    return currentUser.name;
+    return `Welcome, ${currentUser.name}`;
   };
 
   return (
     <section className="h-wrapper">
       <div className="flexCenter paddings innerWidth h-container">
         <Link to="/">
-          <img src="./logo.png" alt="Landers-Logo" width={175} />
+          <img src="./logo.png" alt="HomeHive Logo" width={175} />
         </Link>
         <OutsideClickHandler onOutsideClick={() => setMenuOpened(false)}>
           <div className="flexCenter h-menu" style={getMenuStyles(menuOpened)}>
             <NavLink to="/properties">Properties</NavLink>
             <a href="http://buyyourland.com">Sell</a>
             <NavLink to="/support">Support</NavLink>
-            <NavLink to="/About Us">About</NavLink>
-            <NavLink to="/Contact Us">Contact</NavLink>
+            <NavLink to="/about">About</NavLink>
+            <NavLink to="/contact">Contact</NavLink>
 
-            {/* If user not logged in, show Login; otherwise show user info */}
             {!currentUser ? (
               <button className="button" onClick={() => setShowLoginModal(true)}>
                 {getButtonLabel()}
@@ -105,7 +95,6 @@ const Header = () => {
             ) : (
               <>
                 <button className="button">{getButtonLabel()}</button>
-                {/* If admin, show Add Property button */}
                 {currentUser.role === "ADMIN" && (
                   <button className="button" onClick={() => navigate("/add-property")}>
                     Add Property
@@ -124,12 +113,9 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Render the LoginModal when showLoginModal is true */}
+      {/* Render the LoginModal */}
       {showLoginModal && (
-        <LoginModal
-          onSubmit={handleLoginData}
-          onClose={() => setShowLoginModal(false)}
-        />
+        <LoginModal onSubmit={handleLoginData} onClose={() => setShowLoginModal(false)} />
       )}
     </section>
   );

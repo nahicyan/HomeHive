@@ -3,102 +3,114 @@ import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
 
 export const api = axios.create({
-  baseURL: "http://localhost:8200/api"
+  baseURL: "http://localhost:8200/api", // Update with your actual backend URL
+  withCredentials: true, // Enable cookies for cross-origin requests
 });
 
-export const getAllProperties = async() =>{
-  try {
-    const response = await api.get("/residency/allresd", {
-      timeout: 10 * 1000,
-    });
-
-    if(response.status === 400 || response.status === 500)
-    {
-      throw response.data;
-    }
-    return response.data;
-  }
-  catch (error){
-    toast.error("Something Went Wrong");
-    throw error;
-  }
+// Helper function to handle errors and provide consistent logging
+const handleRequestError = (error, message) => {
+  console.error(`${message}:`, error);
+  throw error;
 };
 
-export const getProperty = async(id) => {
+// Example function to check session status
+export const checkSession = async () => {
   try {
-    const response = await api.get(`/residency/${id}`, {
-      timeout: 10 * 1000,
+    const response = await axios.get('http://localhost:8200/auth/test-session', {
+      withCredentials: true,
     });
-
-    if(response.status === 400 || response.status === 500)
-    {
-      throw response.data;
-    }
-    return response.data;
-  }
-  catch (error){
-    toast.error("Something Went Wrong");
-    throw error;
-  }
-};
-
-export const makeOffer = async (offerData) => {
-  try {
-    const response = await api.post("/buyer/makeOffer", offerData);
+    console.log("Session response:", response.data);
     return response.data;
   } catch (error) {
-    throw error;
+    handleRequestError(error, "Session failed");
   }
 };
 
-// Create user (register)
-export const registerUser = async (registerData) => {
-  try {
-    const response = await api.post('/user/register', registerData, { timeout: 10000 });
-    return response.data;
-  } catch (error) {
-    toast.error('Registration failed');
-    throw error;
-  }
-};
-
-// Login user
+// Login function using session-based authentication
 export const loginUser = async (loginData) => {
   try {
-    const response = await api.post('/user/login', loginData, { timeout: 10000 });
+    const response = await api.post('/user/login', loginData, {
+      withCredentials: true, // This ensures cookies are sent and received
+    });
+    console.log("Login response:", response.data);
     return response.data;
   } catch (error) {
-    toast.error('Login failed');
+    console.error("Login failed:", error);
     throw error;
   }
 };
 
-// NEW: Update property
+
+// Logout function to end session
+export const logoutUser = async () => {
+  try {
+    const response = await axios.get('http://localhost:8200/auth/logout', {
+      withCredentials: true,
+    });
+    console.log("Logout successful:", response.data);
+    return response.data;
+  } catch (error) {
+    handleRequestError(error, "Logout failed");
+  }
+};
+
+// Register a new user
+export const registerUser = async (registerData) => {
+  try {
+    const response = await api.post('/user/register', registerData);
+    console.log("Registration response:", response.data);
+    return response.data;
+  } catch (error) {
+    handleRequestError(error, "Registration failed");
+  }
+};
+
+// Get all properties
+export const getAllProperties = async () => {
+  try {
+    const response = await api.get('/residency/allresd');
+    return response.data;
+  } catch (error) {
+    handleRequestError(error, "Failed to fetch properties");
+  }
+};
+
+// Get a specific property
+export const getProperty = async (id) => {
+  try {
+    const response = await api.get(`/residency/${id}`);
+    return response.data;
+  } catch (error) {
+    handleRequestError(error, "Failed to fetch property details");
+  }
+};
+
+// Make an offer on a property
+export const makeOffer = async (offerData) => {
+  try {
+    const response = await api.post('/buyer/makeOffer', offerData);
+    return response.data;
+  } catch (error) {
+    handleRequestError(error, "Failed to make offer");
+  }
+};
+
+// Update property
 export const updateProperty = async (id, updatedData) => {
   try {
-    // PUT request to /residency/:id
-    const response = await api.put(`/residency/update/${id}`, updatedData, {
-      timeout: 10000,
-    });
-
-    if (response.status === 400 || response.status === 500) {
-      throw response.data;
-    }
-
+    const response = await api.put(`/residency/update/${id}`, updatedData);
     return response.data;
   } catch (error) {
-    toast.error('Failed to update property');
-    throw error;
+    handleRequestError(error, "Failed to update property");
   }
 };
 
-// Fetch all offers made on a specific property
+// Get offers for a specific property
 export const getPropertyOffers = async (propertyId) => {
   try {
     const response = await api.get(`/buyer/offers/property/${propertyId}`);
     return response.data;
   } catch (error) {
-    throw error;
+    handleRequestError(error, "Failed to fetch property offers");
   }
 };
-
