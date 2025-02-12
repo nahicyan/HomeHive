@@ -20,7 +20,7 @@ const AnimatedCards = ({ cards }) => {
           borderRadius: "4px",
         },
       }}
-    >
+    > 
       {cards.map((card, index) => (
         <Box
           key={index}
