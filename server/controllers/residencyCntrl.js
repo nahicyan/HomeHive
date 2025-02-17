@@ -130,7 +130,7 @@ import fs from "fs";
   
           // Pricing and Financing
           disPrice: disPrice ?? null,
-          financing,
+          financing: financing ?? "Not-Available",
           status: status ?? "Available",
   
           // Utilities and Infrastructure
@@ -143,7 +143,7 @@ import fs from "fs";
           // Miscellaneous
           ltag: ltag ?? null,
           rtag: rtag ?? null,
-          landId,
+          landId: landId ?? "Not-Available",
   
           // Relate to the user
           owner: {
@@ -209,9 +209,9 @@ export const updateResidency = asyncHandler(async (req, res) => {
     delete restOfData.updatedAt;
 
     // Optional admin check
-    if (!currentUser || currentUser.role !== "ADMIN") {
-      return res.status(403).json({ message: "Forbidden - Admin only" });
-    }
+    // if (!currentUser || currentUser.role !== "ADMIN") {
+    //   return res.status(403).json({ message: "Forbidden - Admin only" });
+    // }
 
     const updatedResidency = await prisma.residency.update({
       where: { id },
@@ -363,7 +363,7 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
         acre: acre ? parseFloat(acre) : null,
         image: imagePaths.length > 0 ? JSON.stringify(imagePaths) : null, // Store as JSON array
         disPrice: disPrice ? parseFloat(disPrice) : null,
-        financing: financing === "false",
+        financing: financing ?? "Not-Available",
         status: status ?? "Available",
         water: water ?? null,
         sewer: sewer ?? null,
@@ -372,7 +372,7 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
         floodplain: floodplain ?? null,
         ltag: ltag ?? null,
         rtag: rtag ?? null,
-        landId: landId === "false",
+        landId: landId ?? "Not-Available",
         owner: {
           connect: { email: lowerCaseEmail },
         },

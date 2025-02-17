@@ -25,13 +25,13 @@ const FactCard = ({ title, value, icon, backgroundColor }) => {
   <Box
     sx={{
       fontSize: "28px",
-      backgroundColor: "rgba(255, 111, 0, 0.1)", // Light orange background for the icon
+      backgroundColor: "rgba(226, 226, 226, 0.93)", // Light orange background for the icon
       borderRadius: "50%",
       padding: "8px",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      color: "#FF6F00", // Orange icon
+      color: "#000", // Orange icon
     }}
   >
     {icon}

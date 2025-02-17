@@ -1,124 +1,146 @@
 import React, { useState, useEffect, useContext } from "react";
-import { BiMenuAltRight } from "react-icons/bi";
-import OutsideClickHandler from "react-outside-click-handler";
+import { AppBar, Toolbar, Box, Typography, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { checkSession, loginUser, logoutUser } from "../../utils/api"; // Import logoutUser
+import { checkSession, loginUser, logoutUser } from "../../utils/api";
 import { UserContext } from "../../utils/UserContext";
 import LoginModal from "../LoginModal/LoginModal";
-import "./Header.css";
 
 const Header = () => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(UserContext);
-
-  const [menuOpened, setMenuOpened] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // Check session on component mount
   useEffect(() => {
     const checkUserSession = async () => {
       try {
         const response = await checkSession();
         if (response.user) {
-          console.log("Session active:", response.user);
           setCurrentUser(response.user);
-        } else {
-          console.log("No active session");
         }
       } catch (error) {
         console.error("Session check failed:", error);
       }
     };
-
     checkUserSession();
   }, [setCurrentUser]);
 
-  // Style for mobile menu
-  const getMenuStyles = (menuOpen) => {
-    if (document.documentElement.clientWidth <= 800) {
-      return { right: menuOpen ? "0" : "-100%" };
-    }
-    return {};
-  };
-
-  // Handle user login
   const handleLoginData = async ({ email, password }) => {
     try {
       const data = await loginUser({ email, password });
-      console.log("Login successful:", data);
-      if (data.user) {
-        setCurrentUser(data.user);
-      }
+      if (data.user) setCurrentUser(data.user);
       setShowLoginModal(false);
-    } catch (err) {
-      console.error("Login failed:", err);
+    } catch (error) {
+      console.error("Login failed:", error);
     }
   };
 
-  // Handle logout using the imported logoutUser function
   const handleLogout = async () => {
     try {
-      const response = await logoutUser();
-      console.log("Logout response:", response);
+      await logoutUser();
       setCurrentUser(null);
-      window.location.href = "/"; // Redirect to homepage manually
+      navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
-  
 
-  // Determine the button label
-  const getButtonLabel = () => {
-    if (!currentUser) return "Login";
-    return `Welcome, ${currentUser.name}`;
-  };
+  const getButtonLabel = () => (currentUser ? `Welcome, ${currentUser.name}` : "Login / Register");
 
   return (
-    <section className="h-wrapper">
-      <div className="flexCenter paddings innerWidth h-container">
-        <Link to="/">
-          <img src="./logo.png" alt="HomeHive Logo" width={175} />
-        </Link>
-        <OutsideClickHandler onOutsideClick={() => setMenuOpened(false)}>
-          <div className="flexCenter h-menu" style={getMenuStyles(menuOpened)}>
-            <NavLink to="/properties">Properties</NavLink>
-            <a href="http://buyyourland.com">Sell</a>
-            <NavLink to="/support">Support</NavLink>
-            <NavLink to="/about">About</NavLink>
-            <NavLink to="/contact">Contact</NavLink>
+    <AppBar position="static" sx={{ backgroundColor: "#F5F4EF", boxShadow: "none", borderBottom: "1px solid #DDD" }}>
+      <Toolbar sx={{ justifyContent: "space-between", padding: "10px 20px" }}>
+        {/* Logo */}
+        <Typography
+          variant="h5"
+          component={Link}
+          to="/"
+          sx={{
+            textDecoration: "none",
+            fontWeight: 700,
+            color: "#2A3B2D",
+            fontFamily: "'Playfair Display', serif",
+          }}
+        >
+          Landivo
+        </Typography>
 
-            {!currentUser ? (
-              <button className="button" onClick={() => setShowLoginModal(true)}>
+        {/* Center Menu */}
+        <Box sx={{ display: { xs: "none", md: "flex" }, gap: 3 }}>
+          <NavLink className="menu-link" to="/properties">
+            Properties
+          </NavLink>
+          <NavLink className="menu-link" to="/latest-projects">
+            Latest Projects
+          </NavLink>
+          <NavLink className="menu-link" to="/readymoves">
+            ReadyMoves
+          </NavLink>
+          <NavLink className="menu-link" to="/contact">
+            Contact
+          </NavLink>
+        </Box>
+
+        {/* Login / Logout Button */}
+        <Box>
+          {!currentUser ? (
+            <Button variant="contained" sx={loginButtonStyles} onClick={() => setShowLoginModal(true)}>
+              {getButtonLabel()}
+            </Button>
+          ) : (
+            <>
+              <Button variant="text" sx={{ ...loginButtonStyles, color: "#2A3B2D" }}>
                 {getButtonLabel()}
-              </button>
-            ) : (
-              <>
-                <button className="button">{getButtonLabel()}</button>
-                {currentUser.role === "ADMIN" && (
-                  <button className="button" onClick={() => navigate("/add-property")}>
-                    Add Property
-                  </button>
-                )}
-                <button className="button" onClick={handleLogout}>
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
-        </OutsideClickHandler>
+              </Button>
+              <Button variant="outlined" sx={{ ...loginButtonStyles, ml: 2 }} onClick={() => navigate("/dashboard")}>
+                Dashboard
+              </Button>
+              <Button variant="contained" color="error" sx={{ ml: 2 }} onClick={handleLogout}>
+                Logout
+              </Button>
+            </>
+          )}
+        </Box>
 
-        <div className="menu-icon" onClick={() => setMenuOpened((prev) => !prev)}>
-          <BiMenuAltRight size={30} />
-        </div>
-      </div>
+        {/* Mobile Menu Icon */}
+        <IconButton
+          edge="end"
+          color="inherit"
+          aria-label="menu"
+          sx={{ display: { md: "none" }, color: "#2A3B2D" }}
+          onClick={(e) => setMenuAnchor(e.currentTarget)}
+        >
+          <MenuIcon />
+        </IconButton>
 
-      {/* Render the LoginModal */}
+        {/* Mobile Dropdown Menu */}
+        <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
+          <MenuItem onClick={() => navigate("/properties")}>Properties</MenuItem>
+          <MenuItem onClick={() => navigate("/latest-projects")}>Latest Projects</MenuItem>
+          <MenuItem onClick={() => navigate("/readymoves")}>ReadyMoves</MenuItem>
+          <MenuItem onClick={() => navigate("/contact")}>Contact</MenuItem>
+        </Menu>
+      </Toolbar>
+
       {showLoginModal && (
         <LoginModal onSubmit={handleLoginData} onClose={() => setShowLoginModal(false)} />
       )}
-    </section>
+    </AppBar>
   );
+};
+
+const loginButtonStyles = {
+  backgroundColor: "#2A3B2D",
+  color: "#FFFFFF",
+  borderRadius: "25px",
+  padding: "8px 16px",
+  fontSize: "14px",
+  fontWeight: 500,
+  transition: "all 0.3s ease",
+  "&:hover": {
+    backgroundColor: "#1F2B23",
+  },
 };
 
 export default Header;

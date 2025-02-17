@@ -29,11 +29,23 @@ const PropertyCard = ({ card }) => {
       onClick={() => navigate(`../properties/${card.id}`)}
     >
       {/* Header */}
-      <Box sx={{ p: "6px 14px", backgroundColor: "#FF6F00", color: "#fff" }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: "bold", fontSize: "15px", textAlign: "center" }}>
-          {card.title}
-        </Typography>
-      </Box>
+
+<Box sx={{ p: "6px 14px", backgroundColor: "#000", color: "#fff" }}>
+  <Typography
+    variant="subtitle1"
+    sx={{
+      fontWeight: "bold",
+      fontSize: "15px",
+      textAlign: "center",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    }}
+    dangerouslySetInnerHTML={{ __html: card.title }}
+  />
+</Box>
+
+
 
       {/* Image */}
       <CardMedia
@@ -46,10 +58,10 @@ const PropertyCard = ({ card }) => {
       {/* Info Section */}
       <CardContent sx={{ p: "12px", pb: "10px" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: "6px" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#FF6F00", fontSize: "18px" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#000", fontSize: "18px" }}>
             ${formatPrice(card.askingPrice)}
           </Typography>
-          <Typography variant="body2" sx={{ fontSize: "13px", color: "#6e6e73", fontWeight: 500 }}>
+          <Typography variant="body2" sx={{ fontSize: "13px", color: "#404040", fontWeight: 500 }}>
             {card.acre} Acres
           </Typography>
         </Box>
@@ -69,13 +81,13 @@ const PropertyCard = ({ card }) => {
             <Chip
               label={card.ltag}
               sx={{
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#000",
                 color: "#fff",
                 fontSize: "12px",
                 fontWeight: 600,
                 padding: "6px 14px",  // Increased padding for a bigger tag
                 borderRadius: "14px",
-                boxShadow: "0 3px 8px rgba(255, 111, 0, 0.3)",
+                boxShadow: "0 3px 8px rgba(88, 88, 88, 0.3)",
               }}
             />
           )}
@@ -83,13 +95,13 @@ const PropertyCard = ({ card }) => {
             <Chip
               label={card.rtag}
               sx={{
-                backgroundColor: "#0071E3",
+                backgroundColor: "#727272",
                 color: "#fff",
                 fontSize: "12px",
                 fontWeight: 600,
                 padding: "6px 14px",  // Increased padding for a bigger tag
                 borderRadius: "14px",
-                boxShadow: "0 3px 8px rgba(0, 113, 227, 0.3)",
+                boxShadow: "0 3px 8px rgba(95, 95, 95, 0.3)",
               }}
             />
           )}

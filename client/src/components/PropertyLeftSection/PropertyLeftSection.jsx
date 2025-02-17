@@ -47,7 +47,7 @@ const PropertyLeftSection = ({propertyData}) => {
           backgroundColor: "#fff",
           padding: "15px 0",
           zIndex: 1000,
-          borderBottom: "1px solid #e0e0e0", // Subtle separator
+          borderBottom: "1px solidrgb(172, 172, 172)", // Subtle separator
         }}
       >
         {/* Tags & Visitors */}
@@ -55,7 +55,7 @@ const PropertyLeftSection = ({propertyData}) => {
           <Chip
             label={propertyData.ltag}
             sx={{
-              backgroundColor: "#FF6F00",
+              backgroundColor: "#000",
               color: "#ffffff",
               fontSize: "14px",
               fontWeight: 600,
@@ -64,15 +64,15 @@ const PropertyLeftSection = ({propertyData}) => {
               borderRadius: "50px",
               "&:hover": {
                 backgroundColor: "transparent",
-                color: "#FF6F00",
-                boxShadow: "0 5px 15px rgba(255, 111, 0, 0.3)",
+                color: "#000",
+                boxShadow: "0 5px 15px rgba(100, 100, 100, 0.15)",
               },
             }}
           />
           <Chip
             label={propertyData.rtag}
             sx={{
-              backgroundColor: "#0071E3",
+              backgroundColor: "#727272",
               color: "#ffffff",
               fontSize: "14px",
               fontWeight: 600,
@@ -80,15 +80,15 @@ const PropertyLeftSection = ({propertyData}) => {
               borderRadius: "50px",
               "&:hover": {
                 backgroundColor: "transparent",
-                color: "#0071E3",
-                boxShadow: "0 5px 15px rgba(0, 113, 227, 0.3)",
+                color: "#717171",
+                boxShadow: "0 5px 15px rgba(100, 100, 100, 0.3)",
               },
             }}
           />
           <Typography
             sx={{
               fontSize: "14px",
-              color: "#6e6e73",
+              color: "#73737",
               backgroundColor: "#f5f5f7",
               padding: "8px 14px",
               borderRadius: "20px",
@@ -102,24 +102,14 @@ const PropertyLeftSection = ({propertyData}) => {
         <Typography
           sx={{
             fontSize: "13px",
-            color: "#8e8e93",
+            color: "#939393",
             fontWeight: 300,
             marginBottom: "5px",
           }}
         >
           {propertyData.streetaddress}, {propertyData.city}, {propertyData.state} {propertyData.zip}
         </Typography>
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: "30px",
-            fontWeight: 500,
-            color: "#1d1d1f",
-            marginBottom: "15px",
-          }}
-        >
-          {propertyData.title}
-        </Typography>
+        <Typography variant="h4" sx={{ fontSize: "30px", fontWeight: 500, color: "#1d1d1f", marginBottom: "15px" }} dangerouslySetInnerHTML={{ __html: propertyData.title }} />
       </Box>
 
       {/* Animated Image Gallery */}
@@ -149,10 +139,10 @@ const PropertyLeftSection = ({propertyData}) => {
               display: "flex",
               alignItems: "center",
               gap: "8px", // Space between icon and text
-              color: "#FF6F00",
+              color: "#000",
             }}
           >
-            <Search sx={{ fontSize: "28px", color: "#FF6F00" }} />
+            <Search sx={{ fontSize: "28px", color: "#000" }} />
             Highlights
           </Typography>
           <Grid container spacing={2}>

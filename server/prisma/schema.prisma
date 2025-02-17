@@ -66,7 +66,7 @@ model Residency {
     askingPrice         Float
     minPrice            Float
     disPrice            Float?
-    financing           Boolean
+    financing           String
     status              String?
 
     // Utilities and Infrastructure
@@ -79,7 +79,7 @@ model Residency {
     // Miscellaneous
     ltag                String? 
     rtag                String?   
-    landId              Boolean
+    landId              String
     viewCount           Int?      @default(0)                 // View count for unique views
 
     // Timestamps

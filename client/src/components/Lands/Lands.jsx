@@ -147,7 +147,7 @@ export const Lands = () => {
       <Box
         sx={{
           padding: "50px 0",
-          background: "linear-gradient(135deg, #FF6F00 0%, #FF8A65 100%)",
+          background: "linear-gradient(135deg, #000 0%, #FF8A65 100%)",
           color: "#fff",
           textAlign: "center",
         }}
@@ -164,7 +164,7 @@ export const Lands = () => {
             padding: "12px 24px",
             borderRadius: "8px",
             backgroundColor: "#fff",
-            color: "#FF6F00",
+            color: "#000",
             "&:hover": {
               backgroundColor: "#FFCCBC",
             },

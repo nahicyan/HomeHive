@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
   InputBase,
-  Divider,
   Chip,
 } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
@@ -47,7 +46,7 @@ const Properties = () => {
         alignItems="center"
         height="60vh"
       >
-        <PuffLoader height={80} width={80} color="#4066FF" />
+        <PuffLoader height={80} width={80} color="#404040" />
       </Box>
     );
   }
@@ -114,7 +113,7 @@ const Properties = () => {
             <Button
               type="submit"
               sx={{
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#000",
                 color: "#fff",
                 borderRadius: "50px",
                 padding: "12px 20px",

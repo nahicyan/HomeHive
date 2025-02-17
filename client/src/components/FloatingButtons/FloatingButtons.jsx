@@ -45,7 +45,7 @@ const FloatingButtons = ({ propertyData }) => {
           startIcon={button.icon}
           onClick={button.action}
           sx={{
-            backgroundColor: "#FF6F00",
+            backgroundColor: "#000",
             color: "#fff",
             fontWeight: "bold",
             fontSize: isMobile ? "8px" : "14px",

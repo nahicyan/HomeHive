@@ -14,19 +14,28 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const GeoCoderMarker = ({ address }) => {
+  const GeoCoderMarker = ({ address, latitude, longitude }) => {
   const map = useMap();
   const [position, setPosition] = useState([60, 19]);
 
   useEffect(() => {
-    ELG.geocode().text(address).run((err, results, response) => {
-      if (results?.results?.length > 0) {
-        const { lat, lng } = results.results[0].latlng;
-        setPosition([lat, lng]);
-        map.flyTo([lat, lng], 6);
-      }
-    });
-  }, [address]);
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      setPosition([lat, lng]);
+      map.flyTo([lat, lng], 6);
+    } else {
+      ELG.geocode().text(address).run((err, results, response) => {
+        if (results?.results?.length > 0) {
+          const { lat, lng } = results.results[0].latlng;
+          setPosition([lat, lng]);
+          map.flyTo([lat, lng], 6);
+        }
+      });
+    }
+  }, [address, latitude, longitude, map]);
+  
+  
 
   return (
     <Marker position={position} icon={DefaultIcon}>

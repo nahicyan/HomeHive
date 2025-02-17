@@ -7,7 +7,7 @@
 }
 
 .highlight {
-  color: #ff8000;
+  color: #272727;
   font-weight: 600;
 }
 
@@ -39,9 +39,9 @@
 
 .offer-form input:focus,
 .offer-form select:focus {
-  border-color: #0071e3;
+  border-color: #5a5a5a;
   background: #ffffff;
-  box-shadow: 0 0 8px rgba(0, 113, 227, 0.3);
+  box-shadow: 0 0 8px rgba(99, 99, 99, 0.3);
 }
 
 /* Select Dropdown */
@@ -60,7 +60,7 @@
 .offer-button {
   display: inline-block;
   padding: 14px 28px;
-  background-color: #ff8000;
+  background-color: #000000;
   color: #fff;
   font-size: 15px;
   font-weight: 500;
@@ -72,12 +72,12 @@
 }
 
 .offer-button:hover {
-  background-color: #e76b00;
-  box-shadow: 0 4px 12px rgba(255, 128, 0, 0.3);
+  background-color: #303030;
+  box-shadow: 0 4px 12px rgba(105, 105, 105, 0.3);
 }
 
 .offer-button:active {
-  background-color: #cc5f00;
+  background-color: #2e2e2e;
   transform: scale(0.98);
 }
 

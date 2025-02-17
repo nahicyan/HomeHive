@@ -35,10 +35,10 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
-                color: "#FF6F00",
+                color: "#000",
               }}
             >
-              <Description sx={{ fontSize: "24px", color: "#FF6F00" }} />
+              <Description sx={{ fontSize: "24px", color: "#000" }} />
               Description
             </Typography>
             <Typography
@@ -74,12 +74,12 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
                   textDecoration: "underline",
                 },
                 "& a": {
-                  color: "#FF6F00",
+                  color: "#000",
                   textDecoration: "none",
                   fontWeight: 500,
                   "&:hover": {
                     textDecoration: "underline",
-                    color: "#D35400",
+                    color: "#606060",
                   },
                 },
               }}
@@ -100,14 +100,14 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
               onClick={() => setExpanded(!expanded)}
               sx={{
                 margin: "10px 0",
-                backgroundColor: "#FF6F00",
+                backgroundColor: "#000",
                 color: "#fff",
                 fontSize: "12px",
                 padding: "6px 18px",
                 fontWeight: 500,
                 borderRadius: "8px",
                 transition: "background-color 0.3s",
-                "&:hover": { backgroundColor: "#D35400" },
+                "&:hover": { backgroundColor: "#606060" },
               }}
             >
               {expanded ? "Show Less" : "Show More"}
@@ -140,10 +140,10 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
               display: "flex",
               alignItems: "center",
               gap: "8px", // Space between icon and text
-              color: "#FF6F00",
+              color: "#000",
             }}
           >
-            <Landscape sx={{ fontSize: "28px", color: "#FF6F00" }} />
+            <Landscape sx={{ fontSize: "28px", color: "#000" }} />
             Property Details
           </Typography>
 
@@ -162,7 +162,7 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
                   `Coordinates: ${propertyData.latitude}, ${propertyData.longitude}`,
                 ]}
                 icon={
-                  <LocationOn sx={{ fontSize: "24px", color: "#FF6F00" }} />
+                  <LocationOn sx={{ fontSize: "24px", color: "#000" }} />
                 }
               />
             </Grid>
@@ -178,7 +178,7 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
                   `Road Condition: ${propertyData.roadCondition}`,
                   `Floodplain: ${propertyData.floodplain}`,
                 ]}
-                icon={<WaterDrop sx={{ fontSize: "24px", color: "#FF6F00" }} />}
+                icon={<WaterDrop sx={{ fontSize: "24px", color: "#000" }} />}
               />
             </Grid>
 
@@ -193,7 +193,7 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
                   `Financing: ${propertyData.financing ? "Yes" : "No"}`,
                 ]}
                 icon={
-                  <AttachMoney sx={{ fontSize: "24px", color: "#FF6F00" }} />
+                  <AttachMoney sx={{ fontSize: "24px", color: "#000" }} />
                 }
               />
             </Grid>
@@ -208,7 +208,7 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
                   `HOA/POA: ${propertyData.hoaPoa}`,
                   `HOA Info: ${propertyData.hoaDeedDevInfo}`,
                 ]}
-                icon={<Home sx={{ fontSize: "24px", color: "#FF6F00" }} />}
+                icon={<Home sx={{ fontSize: "24px", color: "#000" }} />}
               />
             </Grid>
 
@@ -223,7 +223,7 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
                     propertyData.mobileHomeFriendly === "true" ? "Yes" : "No"
                   }`,
                 ]}
-                icon={<Layers sx={{ fontSize: "24px", color: "#FF6F00" }} />}
+                icon={<Layers sx={{ fontSize: "24px", color: "#000" }} />}
               />
             </Grid>
 
@@ -239,7 +239,7 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
                   />,
                 ]}
                 icon={
-                  <LocalOffer sx={{ fontSize: "24px", color: "#FF6F00" }} />
+                  <LocalOffer sx={{ fontSize: "24px", color: "#000" }} />
                 }
               />
             </Grid>
@@ -248,53 +248,36 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
       </Card>
 
       {/* Map Section */}
-      <Card
-        sx={{
-          borderRadius: "20px",
-          p: 3,
-          mb: 4,
-          background: "#fff",
-          border: "1px solid rgba(0, 0, 0, 0.1)",
-          boxShadow: "0 12px 35px rgba(0, 0, 0, 0.05)",
-          transition: "all 0.3s ease",
-          "&:hover": {
-            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.1)",
-          },
-        }}
-      >
-        <CardContent sx={{ paddingBottom: 0 }}>
-          {" "}
-          {/* Remove extra padding from bottom */}
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{
-              fontSize: "26px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px", // Space between icon and text
-              color: "#FF6F00",
-              marginBottom: "20px", // Ensure proper spacing between title and map
-            }}
-          >
-            <MapIcon sx={{ fontSize: "28px", color: "#FF6F00" }} />{" "}
-            {/* Map icon */}
-            Map
-          </Typography>
-          <Map
-            address={propertyData.streetaddress}
-            city={propertyData.city}
-            state={propertyData.state}
-            sx={{ width: "100%", height: "300px" }} // Ensure Map takes full width and fix height
-          />
-        </CardContent>
-      </Card>
+{propertyData.landId === "Available" ? (
+  <Card sx={{borderRadius:"20px",p:3,mb:4,background:"#fff",border:"1px solid rgba(0,0,0,0.1)",boxShadow:"0 12px 35px rgba(0,0,0,0.05)",transition:"all 0.3s ease","&:hover":{boxShadow:"0 20px 50px rgba(0,0,0,0.1)"}}}>
+    <CardContent sx={{paddingBottom:0}}>
+      <Typography variant="h4" gutterBottom sx={{fontSize:"26px",display:"flex",alignItems:"center",gap:"8px",color:"#000",marginBottom:"20px"}}>
+        <MapIcon sx={{fontSize:"28px",color:"#000"}}/> Map
+      </Typography>
+      <Box sx={{position:"relative",width:"100%",paddingTop:"50%"}}>
+        <iframe loading="lazy" frameBorder="0" src={propertyData.landIdLink.replace("/share/","/embed/")} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",border:0}} />
+      </Box>
+    </CardContent>
+  </Card>
+) : (
+  <Card sx={{borderRadius:"20px",p:3,mb:4,background:"#fff",border:"1px solid rgba(0,0,0,0.1)",boxShadow:"0 12px 35px rgba(0,0,0,0.05)",transition:"all 0.3s ease","&:hover":{boxShadow:"0 20px 50px rgba(0,0,0,0.1)"}}}>
+    <CardContent sx={{paddingBottom:0}}>
+      <Typography variant="h4" gutterBottom sx={{fontSize:"26px",display:"flex",alignItems:"center",gap:"8px",color:"#000",marginBottom:"20px"}}>
+        <MapIcon sx={{fontSize:"28px",color:"#000"}}/> Map
+      </Typography>
+      <Map address={propertyData.streetaddress} city={propertyData.city} state={propertyData.state} sx={{width:"100%",height:"300px"}} />
+    </CardContent>
+  </Card>
+)}
+
+
+
 
       {/* Disclaimer Section */}
       <Card
         sx={{
-          backgroundColor: "#fff3e0",
-          border: "1px solid #ffe0b2",
+          backgroundColor: "#ebebeb",
+          border: "1px solidrgba(255, 178, 178, 0)",
           borderRadius: "16px",
           boxShadow: "0 6px 15px rgba(0, 0, 0, 0.05)",
           mt: 4,
@@ -305,7 +288,7 @@ const PropertyDetailsSection = ({ propertyData, expanded, setExpanded, MAX_LINES
             label="Disclaimer"
             sx={{
               mb: 2,
-              backgroundColor: "#FF6F00",
+              backgroundColor: "#000",
               color: "#fff",
             }}
           />
