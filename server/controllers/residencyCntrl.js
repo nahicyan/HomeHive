@@ -201,21 +201,43 @@ export const updateResidency = asyncHandler(async (req, res) => {
 
   try {
     const { id } = req.params;
-    let { currentUser, ...restOfData } = req.body;
+    let { currentUser, userEmail, image, viewCount, ...restOfData } = req.body;
 
-    // Remove fields you cannot update
+    // Remove non-updatable fields
     delete restOfData.id;
     delete restOfData.createdAt;
     delete restOfData.updatedAt;
 
-    // Optional admin check
-    // if (!currentUser || currentUser.role !== "ADMIN") {
-    //   return res.status(403).json({ message: "Forbidden - Admin only" });
-    // }
+    // Convert necessary fields to correct types
+    if (restOfData.ownerid) restOfData.ownerid = parseInt(restOfData.ownerid, 10);
+    if (restOfData.latitude) restOfData.latitude = parseFloat(restOfData.latitude);
+    if (restOfData.longitude) restOfData.longitude = parseFloat(restOfData.longitude);
+    if (restOfData.sqft) restOfData.sqft = parseInt(restOfData.sqft, 10);
+    if (restOfData.askingPrice) restOfData.askingPrice = parseFloat(restOfData.askingPrice);
+    if (restOfData.minPrice) restOfData.minPrice = parseFloat(restOfData.minPrice);
+    if (restOfData.disPrice) restOfData.disPrice = parseFloat(restOfData.disPrice);
+    if (restOfData.acre) restOfData.acre = parseFloat(restOfData.acre);
 
+    // ✅ Ensure `image` is stored as a **single string**
+    if (image && Array.isArray(image)) {
+      restOfData.image = image.join(",");
+    }
+
+    // Check if userEmail is provided, update relation correctly
+    let updateData = {
+      ...restOfData,
+    };
+
+    if (userEmail) {
+      updateData.owner = {
+        connect: { email: userEmail },
+      };
+    }
+
+    // Perform update
     const updatedResidency = await prisma.residency.update({
       where: { id },
-      data: restOfData,
+      data: updateData,
     });
 
     return res.status(200).json(updatedResidency);
@@ -247,6 +269,10 @@ export const updateResidency = asyncHandler(async (req, res) => {
     });
   }
 });
+
+
+
+
 
 
 export const getResidencyImages = asyncHandler(async (req, res) => {

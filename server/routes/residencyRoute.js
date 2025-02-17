@@ -18,7 +18,7 @@ router.get("/allresd", getAllResidencies);
 
 // 2. Dynamic routes last
 router.get("/:id", getResidency);
-router.put("/update/:id", updateResidency);
+router.put("/update/:id", upload.array("images", 10), updateResidency);
 router.get("/:id/image", getResidencyImages);
 
 export { router as residencyRoute };

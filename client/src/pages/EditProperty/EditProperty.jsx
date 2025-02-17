@@ -41,7 +41,7 @@ const EditProperty = () => {
     landIdLink: "",
     sqft: "",
     acre: "",
-    image: "",
+    image: "", // Existing images
     askingPrice: "",
     minPrice: "",
     disPrice: "",
@@ -56,55 +56,19 @@ const EditProperty = () => {
     rtag: "",
   });
 
-  const [uploadedImages, setUploadedImages] = useState([]);
+  const [uploadedImages, setUploadedImages] = useState([]); // Newly uploaded images
 
-  // Load the existing property data
+  // **Load Existing Property Data**
   useEffect(() => {
     if (propertyId) {
       axios
         .get(`${serverURL}/api/residency/${propertyId}`)
         .then((res) => {
           const data = res.data;
+
           setFormData({
-            ownerid: data.ownerid || "",
-            userEmail: data.userEmail || "",
-            area: data.area || "",
-            title: data.title || "",
-            description: data.description || "",
-            direction: data.direction || "",
-            type: data.type || "",
-            subtype: data.subtype || "",
-            zoning: data.zoning || "",
-            restrictions: data.restrictions || "",
-            mobileHomeFriendly: data.mobileHomeFriendly || "",
-            hoaPoa: data.hoaPoa || "",
-            hoaDeedDevInfo: data.hoaDeedDevInfo || "",
-            notes: data.notes || "",
-            apnOrPin: data.apnOrPin || "",
-            streetaddress: data.streetaddress || "",
-            city: data.city || "",
-            county: data.county || "",
-            state: data.state || "",
-            zip: data.zip || "",
-            latitude: data.latitude || "",
-            longitude: data.longitude || "",
-            landId: data.landId || "",
-            landIdLink: data.landIdLink || "",
-            sqft: data.sqft || "",
-            acre: data.acre || "",
-            image: data.image || "",
-            askingPrice: data.askingPrice || "",
-            minPrice: data.minPrice || "",
-            disPrice: data.disPrice || "",
-            financing: data.financing || "",
-            status: data.status || "",
-            water: data.water || "",
-            sewer: data.sewer || "",
-            electric: data.electric || "",
-            roadCondition: data.roadCondition || "",
-            floodplain: data.floodplain || "",
-            ltag: data.ltag || "",
-            rtag: data.rtag || "",
+            ...data,
+            image: data.image || "", // Keep existing images
           });
         })
         .catch((err) => {
@@ -114,24 +78,37 @@ const EditProperty = () => {
     }
   }, [propertyId]);
 
-  // Set user email if available
+  // **Set User Email from Session**
   useEffect(() => {
     if (currentUser?.email) {
       setFormData((prev) => ({ ...prev, userEmail: currentUser.email }));
     }
   }, [currentUser]);
 
+  // **Handle Input Changes**
   const handleChange = (e) => {
     const { name, value } = e.target;
+  
     setFormData((prev) => {
-      const updated = { ...prev };
-      if (["sqft", "askingPrice", "minPrice", "disPrice"].includes(name)) {
-        const valueWithoutCommas = value.replace(/,/g, "");
-        const numberVal = parseFloat(valueWithoutCommas);
-        if (!isNaN(numberVal)) {
-          updated[name] = numberVal.toLocaleString("en-US");
+      let updated = { ...prev };
+  
+      // Ensure `ownerid` is always an integer
+      if (name === "ownerid") {
+        const parsedValue = parseInt(value, 10);
+        updated[name] = isNaN(parsedValue) ? "" : parsedValue;
+      } 
+      
+      // Handle numeric fields (remove commas and format)
+      else if (["sqft", "askingPrice", "minPrice", "disPrice"].includes(name)) {
+        const numericValue = value.replace(/,/g, ""); // Remove commas
+        const parsedValue = parseFloat(numericValue);
+  
+        if (!isNaN(parsedValue)) {
+          updated[name] = parsedValue.toLocaleString("en-US");
+  
+          // Convert sqft to acres dynamically
           if (name === "sqft") {
-            updated.acre = (numberVal / 43560).toLocaleString("en-US", {
+            updated.acre = (parsedValue / 43560).toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             });
@@ -140,44 +117,95 @@ const EditProperty = () => {
           updated[name] = "";
           if (name === "sqft") updated.acre = "";
         }
-      } else {
+      } 
+      
+      // Handle all other fields normally
+      else {
         updated[name] = value;
       }
+  
       return updated;
     });
   };
+  
 
-  const handleTitleChange = (value) =>
-    setFormData((prev) => ({ ...prev, title: value }));
-  const handleDescriptionChange = (value) =>
-    setFormData((prev) => ({ ...prev, description: value }));
-  const handleNotesChange = (value) =>
-    setFormData((prev) => ({ ...prev, notes: value }));
+  // **Handle Rich Text Fields**
+  const handleTitleChange = (value) => setFormData((prev) => ({ ...prev, title: value }));
+  const handleDescriptionChange = (value) => setFormData((prev) => ({ ...prev, description: value }));
+  const handleNotesChange = (value) => setFormData((prev) => ({ ...prev, notes: value }));
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
       const multipartForm = new FormData();
       const numericFields = ["sqft", "askingPrice", "minPrice", "disPrice", "acre"];
+  
+      console.log("📌 Preparing Form Data for Update:", formData);
+  
       for (let key in formData) {
         let value = formData[key];
+        console.log("Separated key-value pair:");
+        console.log(`Key: ${key}:`, value);
+  
+        // Convert `ownerid` to an integer
+        if (key === "ownerid") {
+          value = parseInt(value, 10);
+          if (isNaN(value)) {
+            console.error("❌ Invalid ownerid value:", formData.ownerid);
+            alert("⚠ Owner ID must be a number.");
+            return;
+          }
+        }
+  
+        // Convert numeric fields correctly
         if (numericFields.includes(key) && typeof value === "string") {
           value = value.replace(/,/g, "");
         }
+  
+        // Convert `landId` to boolean
+        if (key === "landId") {
+          value = value.toLowerCase() === "available" ? true : false;
+        }
+  
+        // ✅ Ensure the `image` field is a **single string** (stringified JSON)
+        if (key === "image" && typeof value === "string") {
+          try {
+            const existingImages = JSON.parse(value);
+            const imageString = existingImages.length > 0 ? existingImages.join(",") : "";
+            multipartForm.append("image", imageString); // ✅ Append as a single comma-separated string
+          } catch (error) {
+            console.warn("⚠ Error parsing existing images:", error);
+          }
+          continue;
+        }
+  
         multipartForm.append(key, value);
       }
-      uploadedImages.forEach((image) => multipartForm.append("images", image.file));
-
+  
+      // Append newly uploaded images
+      if (uploadedImages.length > 0) {
+        uploadedImages.forEach((image) => multipartForm.append("images", image.file));
+      } else {
+        console.warn("⚠ No new images uploaded.");
+      }
+  
+      console.log("📌 Final FormData Entries:", [...multipartForm.entries()]);
+  
+      // **Send the PUT request**
       await axios.put(`${serverURL}/api/residency/update/${propertyId}`, multipartForm, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Property Updated Successfully!");
-      navigate("/properties");
+      console.log("✅ File updated successfully");
     } catch (error) {
-      console.error("Error updating property:", error);
-      alert("Failed to update property");
+      console.error("❌ Error updating property:", error);
+      alert("⚠ Failed to update property");
     }
   };
+  
+  
 
   return (
     <Box
