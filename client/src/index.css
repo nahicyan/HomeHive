@@ -1,14 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+
+
 :root {
-  --primary: #1f3e72;
-  --secondary: rgba(255, 255, 255, 0.78);
-  --indigo: #002647;
-  --blue-gradient: linear-gradient(97.05deg, #4066ff 3.76%, #2949c6 100%);
-  --orange-gradient: linear-gradient(270deg, #ffb978 0%, #ff922d 100%);
-  --blue: #4066ff;
-  --orange: #ff9640;
-  --lightBlue: #eeeeff;
-  --lightOrange: #fff4ee;
-  --shadow: 0px 23px 21px -8px rgba(136, 160, 255, 0.25);
+  --text: #050002;
+  --background: #fdf8f2;
+  --primary: #405025;
+  --secondary: #324d49;
+  --accent: #d39e17;
+  
+  
 }
 
 * {
@@ -129,5 +141,11 @@ a {
   }
   .orangeText {
     font-size: 1.2rem;
+  }
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
   }
 }

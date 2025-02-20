@@ -165,11 +165,6 @@ const EditProperty = () => {
           value = value.replace(/,/g, "");
         }
   
-        // Convert `landId` to boolean
-        if (key === "landId") {
-          value = value.toLowerCase() === "available" ? true : false;
-        }
-  
         // ✅ Ensure the `image` field is a **single string** (stringified JSON)
         if (key === "image" && typeof value === "string") {
           try {
@@ -199,6 +194,8 @@ const EditProperty = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("✅ File updated successfully");
+      alert("✅ Update Successful");
+      navigate(`/properties/${propertyId}`); // Redirect to the updated property
     } catch (error) {
       console.error("❌ Error updating property:", error);
       alert("⚠ Failed to update property");
@@ -251,7 +248,7 @@ const EditProperty = () => {
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField fullWidth label="Owner ID" name="ownerid" value={formData.ownerid} onChange={handleChange} sx={textFieldStyle} />
           <FormControlWithSelect label="Status" name="status" value={formData.status} onChange={handleChange} options={["Available", "Pending", "Sold", "Not Available", "Testing"]} />
-          <FormControlWithSelect label="Area" name="area" value={formData.area} onChange={handleChange} options={["DFW", "Austin", "Houston", "Other"]} />
+          <FormControlWithSelect label="Area" name="area" value={formData.area} onChange={handleChange} options={["DFW", "Austin", "Houston", "San Antonio", "Other"]} />
         </Stack>
       </Box>
       {/* Listing Details */}

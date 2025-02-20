@@ -23,13 +23,13 @@ L.Marker.prototype.options.icon = DefaultIcon;
     const lng = parseFloat(longitude);
     if (!isNaN(lat) && !isNaN(lng)) {
       setPosition([lat, lng]);
-      map.flyTo([lat, lng], 6);
+      map.flyTo([lat, lng], 11);
     } else {
       ELG.geocode().text(address).run((err, results, response) => {
         if (results?.results?.length > 0) {
           const { lat, lng } = results.results[0].latlng;
           setPosition([lat, lng]);
-          map.flyTo([lat, lng], 6);
+          map.flyTo([lat, lng], 11);
         }
       });
     }

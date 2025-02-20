@@ -1,18 +1,25 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
-import {Outlet} from "react-router-dom";
 
-const Layout = () => {
+export default function Layout() {
   return (
-    <>
-      <div style={{background: "var(--indigo)", overflow: "hidden"}}>
+    <div className="bg-[#FDF8F2] text-[#333] min-h-screen overflow-x-hidden flex flex-col">
+      {/* Sticky Header with same background */}
+      <header className="sticky top-0 z-50 bg-[#FDF8F2]">
         <Header />
-        <Outlet/>
-      </div>
-      <Footer />
-    </>
-  );
-};
+      </header>
 
-export default Layout;
+      {/* Main Content */}
+      <main className="flex-grow">
+        <Outlet />
+      </main>
+
+      {/* Footer with a slightly darker beige or complementary color */}
+      <footer className="bg-[#EFE8DE]">
+        <Footer />
+      </footer>
+    </div>
+  );
+}

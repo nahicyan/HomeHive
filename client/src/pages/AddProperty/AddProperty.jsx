@@ -165,7 +165,7 @@ const AddProperty = () => {
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField fullWidth label="Owner ID" name="ownerid" value={formData.ownerid} onChange={handleChange} sx={textFieldStyle} />
           <FormControlWithSelect label="Status" name="status" value={formData.status} onChange={handleChange} options={["Available","Pending","Sold","Not Available","Testing"]} />
-          <FormControlWithSelect label="Area" name="area" value={formData.area} onChange={handleChange} options={["DFW","Austin","Houston","Other"]} />
+          <FormControlWithSelect label="Area" name="area" value={formData.area} onChange={handleChange} options={["DFW","Austin","Houston", "San Antonio","Other"]} />
         </Stack>
       </Box>
     {/* Listing Details */}

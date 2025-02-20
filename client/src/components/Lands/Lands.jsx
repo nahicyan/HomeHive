@@ -1,23 +1,20 @@
 import React from "react";
-import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
-import "swiper/css";
-import {
-  Box,
-  Button,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-  Avatar,
-  Divider,
-} from "@mui/material";
-import { sliderSettings } from "../../utils/common";
-import PropertyCard from "../../components/PropertyCard/PropertyCard";
-import useProperties from "../../components/hooks/useProperties";
+import { motion } from "framer-motion";
+import { Box, Typography } from "@mui/material";
 import { PuffLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
-import { Star, Home, LocationOn } from "@mui/icons-material";
+import PropertyCard from "../../components/PropertyCard/PropertyCard";
+import useProperties from "../../components/hooks/useProperties";
+
+// Simple variants for fade-up animation
+const fadeUp = {
+  hidden: { opacity: 0, y: 50 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
+};
 
 export const Lands = () => {
   const { data, isError, isLoading } = useProperties();
@@ -42,192 +39,173 @@ export const Lands = () => {
   }
 
   return (
-    <section style={{ padding: "50px 0" }}>
-      {/* Hero Section */}
-      <Box
-        sx={{
-          height: "300px",
-          background: "url('/images/hero-background.jpg') center/cover no-repeat",
-          color: "#fff",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-          flexDirection: "column",
-        }}
+    <>
+      {/* First Section: Find The Best Land In Your Area */}
+      <motion.section
+        className="py-12 bg-[#FDF8F2]"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={fadeUp}
       >
-        <Typography variant="h3" fontWeight={700} gutterBottom>
-          Discover Your Next Property
-        </Typography>
-        <Typography variant="h6">Explore the best lands and properties available</Typography>
-      </Box>
+        <div className="max-w-screen-xl mx-auto px-4">
+          {/* Section Title */}
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2 text-[#4b5b4d]">
+              Find The Best Land In Your Area
+            </h2>
+            <p className="text-sm md:text-base text-[#4b5b4d]/80">
+              Browse By Area
+            </p>
+          </div>
 
-      {/* Highlighted Features */}
-      <Box mt={8} mb={8} className="paddings innerWidth">
-        <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
-          Why Choose Us?
-        </Typography>
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={4}>
-            <FeatureCard
-              icon={<Home sx={{ fontSize: 40, color: "#FF5722" }} />}
-              title="Premium Listings"
-              description="Handpicked premium lands and properties for the best value."
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <FeatureCard
-              icon={<LocationOn sx={{ fontSize: 40, color: "#4CAF50" }} />}
-              title="Prime Locations"
-              description="Find properties in the most desirable locations."
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <FeatureCard
-              icon={<Star sx={{ fontSize: 40, color: "#2196F3" }} />}
-              title="Trusted Service"
-              description="Work with experienced agents who prioritize your needs."
-            />
-          </Grid>
-        </Grid>
-      </Box>
-
-      {/* New Properties Section */}
-      <Box className="paddings innerWidth l-container" mb={8}>
-        <Typography variant="h4" align="center" fontWeight={700} mb={4}>
-          New Properties
-        </Typography>
-        <Swiper {...sliderSettings}>
-          {data.slice(0, 8).map((card, i) => (
-            <SwiperSlide key={i}>
-              <PropertyCard card={card} />
-            </SwiperSlide>
-          ))}
-          <SliderButtons />
-        </Swiper>
-
-        <Box display="flex" justifyContent="center" mt={4}>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{
-              fontSize: "18px",
-              fontWeight: 600,
-              padding: "12px 24px",
-              borderRadius: "8px",
-            }}
-            onClick={() => navigate("/properties")}
-          >
-            See All Properties
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Testimonials Section */}
-      <Box className="paddings innerWidth" mt={8} mb={8}>
-        <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
-          What Our Clients Say
-        </Typography>
-        <Grid container spacing={4}>
-          {Array(3)
-            .fill(0)
-            .map((_, index) => (
-              <Grid item xs={12} sm={4} key={index}>
-                <TestimonialCard
-                  avatarSrc={`/images/avatar${index + 1}.jpg`}
-                  name={`Client ${index + 1}`}
-                  feedback="Excellent service and great properties! Highly recommend."
+          {/* 5 Categories Grid (DFW, Austin, Houston, San Antonio, Others) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+            {/* DFW */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-xl font-light mb-2 text-[#4b5b4d]">Dallas Fort Worth</h3>
+              <div className="relative group w-full aspect-w-16 aspect-h-10 
+                              rounded-lg shadow-md overflow-hidden 
+                              transition-transform transform hover:-translate-y-1 hover:shadow-xl">
+                <img
+                  src="./dfw.jpg"
+                  alt="DFW"
+                  className="w-full h-full object-cover"
                 />
-              </Grid>
-            ))}
-        </Grid>
-      </Box>
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button  onClick={() => navigate("/DFW")}  className="bg-white text-[#4b5b4d] font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg">
+                    Lands in DFW
+                  </button>
+                </div>
+              </div>
+            </div>
 
-      {/* Footer CTA */}
-      <Box
-        sx={{
-          padding: "50px 0",
-          background: "linear-gradient(135deg, #000 0%, #FF8A65 100%)",
-          color: "#fff",
-          textAlign: "center",
-        }}
+            {/* Austin */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-xl font-light mb-2 text-[#4b5b4d]">Austin</h3>
+              <div className="relative group w-full aspect-w-16 aspect-h-10 
+                              rounded-lg shadow-md overflow-hidden 
+                              transition-transform transform hover:-translate-y-1 hover:shadow-xl">
+                <img
+                  src="./austin.jpg"
+                  alt="Austin"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => navigate("/Austin")} className="bg-white text-[#4b5b4d] font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg">
+                    Lands in Austin
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Houston */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-xl font-light mb-2 text-[#4b5b4d]">Houston</h3>
+              <div className="relative group w-full aspect-w-16 aspect-h-10 
+                              rounded-lg shadow-md overflow-hidden 
+                              transition-transform transform hover:-translate-y-1 hover:shadow-xl">
+                <img
+                  src="./houston.jpg"
+                  alt="Houston"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => navigate("/Houston")} className="bg-white text-[#4b5b4d] font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg">
+                    Lands in Houston
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* San Antonio */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-xl font-light mb-2 text-[#4b5b4d]">San Antonio</h3>
+              <div className="relative group w-full aspect-w-16 aspect-h-10 
+                              rounded-lg shadow-md overflow-hidden 
+                              transition-transform transform hover:-translate-y-1 hover:shadow-xl">
+                <img
+                  src="./sanantonio.jpg"
+                  alt="San Antonio"
+                  className="w-full h-full object-cover"
+                />
+                <div onClick={() => navigate("/SanAntonio")} className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button className="bg-white text-[#4b5b4d] font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg">
+                    Lands in San Antonio
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Others */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-xl font-light mb-2 text-[#4b5b4d]">Others</h3>
+              <div className="relative group w-full aspect-w-16 aspect-h-10 
+                              rounded-lg shadow-md overflow-hidden 
+                              transition-transform transform hover:-translate-y-1 hover:shadow-xl">
+                <img
+                  src="./others.jpg"
+                  alt="Others"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center 
+                                opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => navigate("/OtherLands")} className="bg-white text-[#4b5b4d] font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg">
+                    Other Lands
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Second Section: Featured Properties */}
+      <motion.section
+        className="py-12 bg-[#FDF8F2]"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={fadeUp}
       >
-        <Typography variant="h4" fontWeight={700} gutterBottom>
-          Ready to Find Your Dream Property?
-        </Typography>
-        <Button
-          variant="contained"
-          sx={{
-            mt: 3,
-            fontSize: "18px",
-            fontWeight: 600,
-            padding: "12px 24px",
-            borderRadius: "8px",
-            backgroundColor: "#fff",
-            color: "#000",
-            "&:hover": {
-              backgroundColor: "#FFCCBC",
-            },
-          }}
-          onClick={() => navigate("/contact")}
-        >
-          Contact Us
-        </Button>
-      </Box>
-    </section>
-  );
-};
+        <div className="max-w-screen-xl mx-auto px-4">
+          {/* Title & Subtext */}
+          <div className="text-center mb-8">
+            <h2 className="text-4xl font-bold mb-2 text-[#4b5b4d]">
+              Featured Properties
+            </h2>
+            {/* Decorative line under the heading */}
+            <div className="mx-auto w-20 h-1 bg-[#576756] mb-2"></div>
+            <p className="text-[#4b5b4d]/80">
+              Discover our top picks for this week
+            </p>
+          </div>
 
-const FeatureCard = ({ icon, title, description }) => (
-  <Card
-    sx={{
-      borderRadius: "16px",
-      boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
-      textAlign: "center",
-      padding: "20px",
-    }}
-  >
-    <Box mb={2}>{icon}</Box>
-    <Typography variant="h6" fontWeight="bold">
-      {title}
-    </Typography>
-    <Typography variant="body2" color="textSecondary">
-      {description}
-    </Typography>
-  </Card>
-);
+          {/* Property Cards Grid - Larger & Wider */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {data.map((property) => (
+              <PropertyCard key={property.id} card={property} />
+            ))}
+          </div>
 
-const TestimonialCard = ({ avatarSrc, name, feedback }) => (
-  <Card
-    sx={{
-      padding: "20px",
-      borderRadius: "12px",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-    }}
-  >
-    <Box display="flex" alignItems="center" gap={2} mb={2}>
-      <Avatar src={avatarSrc} sx={{ width: 50, height: 50 }} />
-      <Typography variant="subtitle1" fontWeight="bold">
-        {name}
-      </Typography>
-    </Box>
-    <Typography variant="body2" color="textSecondary">
-      {feedback}
-    </Typography>
-  </Card>
-);
-
-const SliderButtons = () => {
-  const swiper = useSwiper();
-  return (
-    <Box display="flex" justifyContent="center" gap="20px" mt={4}>
-      <Button variant="contained" onClick={() => swiper.slidePrev()}>
-        &lt;
-      </Button>
-      <Button variant="contained" onClick={() => swiper.slideNext()}>
-        &gt;
-      </Button>
-    </Box>
+          {/* Browse All Properties Button */}
+          <div className="mt-8 flex justify-end">
+            <a
+              href="/properties"
+              className="inline-block bg-[#576756] text-white font-semibold py-2 px-6 rounded-md shadow 
+                         hover:bg-[#4b5b4d] transition-colors"
+            >
+              Browse All Properties
+            </a>
+          </div>
+        </div>
+      </motion.section>
+    </>
   );
 };
 

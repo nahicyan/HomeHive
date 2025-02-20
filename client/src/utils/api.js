@@ -44,7 +44,7 @@ export const loginUser = async (loginData) => {
 // Logout function to end session
 export const logoutUser = async () => {
   try {
-    const response = await axios.get('http://localhost:8200/auth/logout', {
+    const response = await axios.get('http://z:8200/auth/logout', {
       withCredentials: true,
     });
     console.log("Logout successful:", response.data);

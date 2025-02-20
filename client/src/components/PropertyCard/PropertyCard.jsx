@@ -1,5 +1,4 @@
 import React from "react";
-import { Card, CardMedia, CardContent, Typography, Box, Chip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../../utils/format";
 
@@ -11,103 +10,59 @@ const PropertyCard = ({ card }) => {
   const firstImage = images.length > 0 ? `${serverURL}/${images[0]}` : "/default-image.jpg";
 
   return (
-    <Card
-      sx={{
-        borderRadius: "18px",
-        boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
-        transition: "all 0.3s ease",
-        cursor: "pointer",
-        width: "100%",
-        maxWidth: "460px",
-        height: "380px",
-        overflow: "hidden",
-        "&:hover": {
-          transform: "translateY(-6px)",
-          boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
-        },
-      }}
-      onClick={() => navigate(`../properties/${card.id}`)}
+    <div
+      // Outer container with gradient border and smooth shadow transitions
+      className="group relative w-full max-w-[460px] h-[380px] rounded-xl p-1 bg-gradient-to-r from-white/40 via-white/20 to-white/40 shadow-xl transition-all duration-300 hover:shadow-2xl cursor-pointer"      onClick={() => navigate(`../properties/${card.id}`)}
     >
-      {/* Header */}
+      {/* Inner container with the frosted glass effect */}
+      <div className="absolute inset-0 bg-white/10 backdrop-blur-xl rounded-xl border border-white/30 overflow-hidden">
+        
+        {/* Thinner Top Header */}
+        <div className="py-1 px-3 bg-[#4b5b4d] text-white text-center">
+          <h3
+            className="text-sm font-medium truncate"
+            dangerouslySetInnerHTML={{ __html: card.title }}
+          />
+        </div>
 
-<Box sx={{ p: "6px 14px", backgroundColor: "#000", color: "#fff" }}>
-  <Typography
-    variant="subtitle1"
-    sx={{
-      fontWeight: "bold",
-      fontSize: "15px",
-      textAlign: "center",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    }}
-    dangerouslySetInnerHTML={{ __html: card.title }}
-  />
-</Box>
+        {/* Image Section */}
+        <div className="relative h-[55%] overflow-hidden">
+          <img
+            src={firstImage}
+            alt="Property"
+            className="w-full h-full object-cover brightness-90 transition-transform duration-300 transform group-hover:scale-105"
+          />
+        </div>
 
+        {/* Thinner Bottom Info Section */}
+        <div className="p-2">
+          <div className="flex justify-between mb-1">
+            <h4 className="text-base font-medium text-[#4b5b4d]">${formatPrice(card.askingPrice)}</h4>
+            <p className="text-sm font-medium text-[#4b5b4d]">{card.acre} Acres</p>
+          </div>
+          <div className="flex justify-between text-[#4b5b4d] text-sm font-medium">
+            <p>
+              <strong>{card.city}</strong>, {card.state} {card.zip}
+            </p>
+            <p className="text-[#4b5b4d]">{card.county} County</p>
+          </div>
 
-
-      {/* Image */}
-      <CardMedia
-        component="img"
-        image={firstImage}
-        alt="Property Image"
-        sx={{ height: "55%", objectFit: "cover", filter: "brightness(0.85)" }}
-      />
-
-      {/* Info Section */}
-      <CardContent sx={{ p: "12px", pb: "10px" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: "6px" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#000", fontSize: "18px" }}>
-            ${formatPrice(card.askingPrice)}
-          </Typography>
-          <Typography variant="body2" sx={{ fontSize: "13px", color: "#404040", fontWeight: 500 }}>
-            {card.acre} Acres
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", mb: "6px" }}>
-          <Typography variant="body2" sx={{ fontSize: "14px", color: "#333", fontWeight: 500 }}>
-            <strong>{card.city}</strong>, {card.state} {card.zip}
-          </Typography>
-          <Typography variant="body2" sx={{ fontSize: "13px", color: "#666" }}>
-            {card.county} County
-          </Typography>
-        </Box>
-
-        {/* Tags */}
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: "8px", mt: "6px" }}>
-          {card.ltag && (
-            <Chip
-              label={card.ltag}
-              sx={{
-                backgroundColor: "#000",
-                color: "#fff",
-                fontSize: "12px",
-                fontWeight: 600,
-                padding: "6px 14px",  // Increased padding for a bigger tag
-                borderRadius: "14px",
-                boxShadow: "0 3px 8px rgba(88, 88, 88, 0.3)",
-              }}
-            />
-          )}
-          {card.rtag && (
-            <Chip
-              label={card.rtag}
-              sx={{
-                backgroundColor: "#727272",
-                color: "#fff",
-                fontSize: "12px",
-                fontWeight: 600,
-                padding: "6px 14px",  // Increased padding for a bigger tag
-                borderRadius: "14px",
-                boxShadow: "0 3px 8px rgba(95, 95, 95, 0.3)",
-              }}
-            />
-          )}
-        </Box>
-      </CardContent>
-    </Card>
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {card.ltag && (
+              <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide text-white bg-blue-600 shadow-md transition-transform duration-200 transform group-hover:scale-105">
+                {card.ltag}
+              </span>
+            )}
+            {card.rtag && (
+              <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide text-white bg-pink-600 shadow-md transition-transform duration-200 transform group-hover:scale-105">
+                {card.rtag}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

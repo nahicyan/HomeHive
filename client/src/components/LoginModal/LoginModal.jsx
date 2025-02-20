@@ -84,10 +84,10 @@ const LoginModal = ({ onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-          <img src="./logo2.png" alt="HomeHive Logo" style={{ height: "48px" }} />
+          <img src="https://shinyhomes.net/wp-content/uploads/2025/02/Landivo.svg" alt="HomeHive Logo" style={{ height: "48px" }} />
         </Box>
         <Typography variant="h5" align="center" sx={{ fontWeight: 600, color: "#1f2937", mb: 2 }}>
-          Welcome to HomeHive
+          Welcome to Landivo
         </Typography>
         <form onSubmit={handleLogin}>
           <Box sx={{ mb: 2 }}>
