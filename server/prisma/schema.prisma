@@ -32,7 +32,7 @@ model Residency {
     userEmail           String
 
     // Property Details
-    ownerid             Int
+    ownerId             Int
     title               String
     description         String?
     direction           String?
@@ -47,7 +47,7 @@ model Residency {
 
     // Address and Location
     apnOrPin            String   @unique                      // APN/PIN must be unique
-    streetaddress       String
+    streetAddress       String
     city                String
     county              String
     state               String
@@ -87,7 +87,7 @@ model Residency {
     updatedAt           DateTime @updatedAt
 
     // Unique Constraints
-    @@unique(fields: [apnOrPin, streetaddress, city, state, userEmail])  // Prevent duplicate listings by the same user
+    @@unique(fields: [apnOrPin, streetAddress, city, state, userEmail])  // Prevent duplicate listings by the same user
     @@unique(fields: [latitude, longitude])                              // Ensure no duplicate geolocations
 }
 

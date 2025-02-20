@@ -10,16 +10,16 @@ export function transformResidencyData(rawData) {
     const data = { ...rawData };
   
     // Validate & Convert each field according to your Prisma schema.
-    // 1) ownerid => Int
-    if (data.ownerid !== undefined) {
-      if (typeof data.ownerid === "string") {
-        const parsed = parseInt(data.ownerid, 10);
+    // 1) ownerId => Int
+    if (data.ownerId !== undefined) {
+      if (typeof data.ownerId === "string") {
+        const parsed = parseInt(data.ownerId, 10);
         if (Number.isNaN(parsed)) {
-          throw new Error("ownerid must be an integer but received an invalid string");
+          throw new Error("ownerId must be an integer but received an invalid string");
         }
-        data.ownerid = parsed;
-      } else if (typeof data.ownerid !== "number") {
-        throw new Error("ownerid must be an integer but received a non-numeric value");
+        data.ownerId = parsed;
+      } else if (typeof data.ownerId !== "number") {
+        throw new Error("ownerId must be an integer but received a non-numeric value");
       }
     }
   

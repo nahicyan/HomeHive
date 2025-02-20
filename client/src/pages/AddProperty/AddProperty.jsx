@@ -15,7 +15,7 @@ const AddProperty = () => {
   const { currentUser } = useContext(UserContext);
 
   const [formData, setFormData] = useState({
-    ownerid: "",
+    ownerId: "",
     userEmail: "",
     area: "",
     title: "",
@@ -30,7 +30,7 @@ const AddProperty = () => {
     hoaDeedDevInfo: "",
     notes: "",
     apnOrPin: "",
-    streetaddress: "",
+    streetAddress: "",
     city: "",
     county: "",
     state: "",
@@ -163,7 +163,7 @@ const AddProperty = () => {
     <Box sx={sectionStyle}>
       <Typography variant="h5" gutterBottom sx={sectionTitleStyle}>System Information</Typography>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-          <TextField fullWidth label="Owner ID" name="ownerid" value={formData.ownerid} onChange={handleChange} sx={textFieldStyle} />
+          <TextField fullWidth label="Owner ID" name="ownerId" value={formData.ownerId} onChange={handleChange} sx={textFieldStyle} />
           <FormControlWithSelect label="Status" name="status" value={formData.status} onChange={handleChange} options={["Available","Pending","Sold","Not Available","Testing"]} />
           <FormControlWithSelect label="Area" name="area" value={formData.area} onChange={handleChange} options={["DFW","Austin","Houston", "San Antonio","Other"]} />
         </Stack>
@@ -231,7 +231,7 @@ const AddProperty = () => {
     {/* Location & Identification */}
     <Box sx={sectionStyle}><Typography variant="h5" gutterBottom sx={sectionTitleStyle}>Location & Identification</Typography>
       <Stack direction={{xs:"column",sm:"row"}} spacing={2}>
-        <TextField fullWidth label="Street Address" name="streetaddress" value={formData.streetaddress} onChange={handleChange} sx={textFieldStyle} />
+        <TextField fullWidth label="Street Address" name="streetAddress" value={formData.streetAddress} onChange={handleChange} sx={textFieldStyle} />
         <TextField fullWidth label="City" name="city" value={formData.city} onChange={handleChange} sx={textFieldStyle} />
         <TextField fullWidth label="County" name="county" value={formData.county} onChange={handleChange} sx={textFieldStyle} />
         <TextField fullWidth label="State" name="state" value={formData.state} onChange={handleChange} sx={textFieldStyle} />

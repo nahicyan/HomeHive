@@ -63,7 +63,7 @@ export const newOfferTemplate = (property, buyer, offeredPrice) => `
   <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <tr><th>Property Name</th><td>${property.title}</td></tr>
     <tr><th>Property Address</th><td>${property.address}</td></tr>
-     <tr><th>Owner ID</th><td>${property.ownerid}</td></tr>
+     <tr><th>Owner ID</th><td>${property.ownerId}</td></tr>
     <tr><th>Property ID</th><td>${property.id}</td></tr>
     <tr><th>Asking Price</th><td>$${property.askingPrice}</td></tr>
     <tr><th>Offered Price</th><td>$${offeredPrice}</td></tr>
@@ -94,7 +94,7 @@ export const updatedOfferTemplate = (property, buyer, offeredPrice) => `
   <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <tr><th>Property Name</th><td>${property.title}</td></tr>
     <tr><th>Property Address</th><td>${property.address}</td></tr>
-     <tr><th>Owner ID</th><td>${property.ownerid}</td></tr>
+     <tr><th>Owner ID</th><td>${property.ownerId}</td></tr>
     <tr><th>Property ID</th><td>${property.id}</td></tr>
     <tr><th>Asking Price</th><td>$${property.askingPrice}</td></tr>
     <tr><th>New Offered Price</th><td>$${offeredPrice}</td></tr>
@@ -125,7 +125,7 @@ export const lowOfferTemplate = (property, buyer, offeredPrice) => `
   <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <tr><th>Property Name</th><td>${property.title}</td></tr>
     <tr><th>Property Address</th><td>${property.address}</td></tr>
-     <tr><th>Owner ID</th><td>${property.ownerid}</td></tr>
+     <tr><th>Owner ID</th><td>${property.ownerId}</td></tr>
     <tr><th>Property ID</th><td>${property.id}</td></tr>
     <tr><th>Asking Price</th><td>$${property.askingPrice}</td></tr>
     <tr><th>Offered Price</th><td>$${offeredPrice}</td></tr>

@@ -104,7 +104,7 @@ export default function Offer({ propertyData }) {
             Make An Offer
           </CardTitle>
           <CardDescription className="text-[#324d49]">
-            For {propertyData.streetaddress || "This Property"}
+            For {propertyData.streetAddress || "This Property"}
           </CardDescription>
         </CardHeader>
 

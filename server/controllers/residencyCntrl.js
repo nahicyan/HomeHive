@@ -5,7 +5,7 @@ import fs from "fs";
 
   export const createResidency = asyncHandler(async (req, res) => {
     const {
-      ownerid,
+      ownerId,
       apnOrPin,
       askingPrice,
       minPrice,
@@ -22,7 +22,7 @@ import fs from "fs";
       notes,
   
       // Address and Location
-      streetaddress,
+      streetAddress,
       city,
       county,
       state,
@@ -76,7 +76,7 @@ import fs from "fs";
           OR: [
             { apnOrPin },
             {
-              streetaddress,
+              streetAddress,
               city,
               state,
               userEmail: lowerCaseEmail,
@@ -96,7 +96,7 @@ import fs from "fs";
       // Create the property with provided data
       const residency = await prisma.residency.create({
         data: {
-          ownerid,
+          ownerId,
           apnOrPin,
           askingPrice,
           minPrice,
@@ -113,7 +113,7 @@ import fs from "fs";
           notes: notes ?? null,
   
           // Address and Location
-          streetaddress,
+          streetAddress,
           city,
           county,
           state,
@@ -209,7 +209,7 @@ export const updateResidency = asyncHandler(async (req, res) => {
     delete restOfData.updatedAt;
 
     // Convert necessary fields to correct types
-    if (restOfData.ownerid) restOfData.ownerid = parseInt(restOfData.ownerid, 10);
+    if (restOfData.ownerId) restOfData.ownerId = parseInt(restOfData.ownerId, 10);
     if (restOfData.latitude) restOfData.latitude = parseFloat(restOfData.latitude);
     if (restOfData.longitude) restOfData.longitude = parseFloat(restOfData.longitude);
     if (restOfData.sqft) restOfData.sqft = parseInt(restOfData.sqft, 10);
@@ -308,7 +308,7 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
 
     // Destructure the fields from req.body
     const {
-      ownerid,
+      ownerId,
       apnOrPin,
       askingPrice,
       minPrice,
@@ -323,7 +323,7 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
       hoaPoa,
       hoaDeedDevInfo,
       notes,
-      streetaddress,
+      streetAddress,
       city,
       county,
       state,
@@ -361,7 +361,7 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
     // Create the residency with the array of image paths
     const residency = await prisma.residency.create({
       data: {
-        ownerid: parseInt(ownerid),
+        ownerId: parseInt(ownerId),
         apnOrPin,
         askingPrice: parseFloat(askingPrice),
         minPrice: parseFloat(minPrice),
@@ -376,7 +376,7 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
         hoaPoa: hoaPoa ?? null,
         hoaDeedDevInfo: hoaDeedDevInfo ?? null,
         notes: notes ?? null,
-        streetaddress,
+        streetAddress,
         city,
         county,
         state,

@@ -15,7 +15,7 @@ const EditProperty = () => {
   const { currentUser } = useContext(UserContext);
 
   const [formData, setFormData] = useState({
-    ownerid: "",
+    ownerId: "",
     userEmail: "",
     area: "",
     title: "",
@@ -30,7 +30,7 @@ const EditProperty = () => {
     hoaDeedDevInfo: "",
     notes: "",
     apnOrPin: "",
-    streetaddress: "",
+    streetAddress: "",
     city: "",
     county: "",
     state: "",
@@ -92,8 +92,8 @@ const EditProperty = () => {
     setFormData((prev) => {
       let updated = { ...prev };
   
-      // Ensure `ownerid` is always an integer
-      if (name === "ownerid") {
+      // Ensure `ownerId` is always an integer
+      if (name === "ownerId") {
         const parsedValue = parseInt(value, 10);
         updated[name] = isNaN(parsedValue) ? "" : parsedValue;
       } 
@@ -150,11 +150,11 @@ const EditProperty = () => {
         console.log("Separated key-value pair:");
         console.log(`Key: ${key}:`, value);
   
-        // Convert `ownerid` to an integer
-        if (key === "ownerid") {
+        // Convert `ownerId` to an integer
+        if (key === "ownerId") {
           value = parseInt(value, 10);
           if (isNaN(value)) {
-            console.error("❌ Invalid ownerid value:", formData.ownerid);
+            console.error("❌ Invalid ownerId value:", formData.ownerId);
             alert("⚠ Owner ID must be a number.");
             return;
           }
@@ -246,7 +246,7 @@ const EditProperty = () => {
           System Information
         </Typography>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-          <TextField fullWidth label="Owner ID" name="ownerid" value={formData.ownerid} onChange={handleChange} sx={textFieldStyle} />
+          <TextField fullWidth label="Owner ID" name="ownerId" value={formData.ownerId} onChange={handleChange} sx={textFieldStyle} />
           <FormControlWithSelect label="Status" name="status" value={formData.status} onChange={handleChange} options={["Available", "Pending", "Sold", "Not Available", "Testing"]} />
           <FormControlWithSelect label="Area" name="area" value={formData.area} onChange={handleChange} options={["DFW", "Austin", "Houston", "San Antonio", "Other"]} />
         </Stack>
@@ -305,7 +305,7 @@ const EditProperty = () => {
           Location & Identification
         </Typography>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-          <TextField fullWidth label="Street Address" name="streetaddress" value={formData.streetaddress} onChange={handleChange} sx={textFieldStyle} />
+          <TextField fullWidth label="Street Address" name="streetAddress" value={formData.streetAddress} onChange={handleChange} sx={textFieldStyle} />
           <TextField fullWidth label="City" name="city" value={formData.city} onChange={handleChange} sx={textFieldStyle} />
           <TextField fullWidth label="County" name="county" value={formData.county} onChange={handleChange} sx={textFieldStyle} />
           <TextField fullWidth label="State" name="state" value={formData.state} onChange={handleChange} sx={textFieldStyle} />
