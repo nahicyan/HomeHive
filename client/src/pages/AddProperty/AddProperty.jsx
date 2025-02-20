@@ -7,6 +7,7 @@ import { useContext } from "react"; // New import
 import { UserContext } from "../../utils/UserContext"; // New import for UserContext
 import ImageUploadPreview from "../../components/ImageUploadPreview/ImageUploadPreview"; // Import the ImageUploadPreview componen
 import RichTextEditor from "../../components/RichTextEditor/RichTextEditor";
+import { createResidencyWithFiles } from "@/utils/api";
 
 const serverURL = import.meta.env.VITE_SERVER_URL;
 
@@ -41,7 +42,7 @@ const AddProperty = () => {
     landIdLink: "",
     sqft: "",
     acre: "",
-    image: "",
+    imageUrls: "",
     askingPrice: "",
     minPrice: "",
     disPrice: "",
@@ -120,35 +121,44 @@ const AddProperty = () => {
       e.preventDefault();
       try {
         const multipartForm = new FormData();
-        // List of fields that are stored with formatting (commas)
         const numericFields = ["sqft", "askingPrice", "minPrice", "disPrice", "acre"];
-        
+    
+        // Append all fields except "imageUrls"
         for (let key in formData) {
+          if (key === "imageUrls") continue;
           let value = formData[key];
-          // If this is a numeric field and value is a string, remove commas
           if (numericFields.includes(key) && typeof value === "string") {
             value = value.replace(/,/g, "");
           }
           multipartForm.append(key, value);
         }
-        
-        uploadedImages.forEach((image) => multipartForm.append("images", image.file));
     
-        await axios.post(
-          `${serverURL}/api/residency/createWithFile`,
-          multipartForm,
-          { headers: { "Content-Type": "multipart/form-data" } }
+        // Process existing images (if any) from formData.imageUrls.
+        let existingImages = [];
+        if (formData.imageUrls && formData.imageUrls.trim() !== "") {
+          try {
+            existingImages = JSON.parse(formData.imageUrls);
+            if (!Array.isArray(existingImages)) existingImages = [];
+          } catch (err) {
+            existingImages = [];
+          }
+        }
+        console.log("Image URL checking: ", JSON.stringify(existingImages));
+        multipartForm.append("imageUrls", JSON.stringify(existingImages));
+    
+        // Append newly uploaded files directly from the file objects.
+        uploadedImages.forEach((file) =>
+          multipartForm.append("images", file)
         );
     
-        alert("Property Added Successfully!");
-        navigate("/properties");
+        await createResidencyWithFiles(multipartForm);
+    
+        console.log("<<<< Property Added Successfully >>>>");
       } catch (error) {
         console.error("Error creating property:", error);
         alert("Failed to create property");
       }
     };
-    
-
   
   return (<Box component="form" onSubmit={handleSubmit} sx={{display:"flex",flexDirection:"column",gap:4,background:"#fff",borderRadius:"20px",boxShadow:"0 12px 24px rgba(0, 0, 0, 0.1)",border:"1px solid rgba(200, 200, 200, 0.6)",maxWidth:"1080px",width:"95%",mx:"auto",p:3}}>
     <Typography variant="h3" gutterBottom sx={{color:"#2d2d2d",fontWeight:700}}>Add New Property</Typography>
@@ -294,7 +304,13 @@ const AddProperty = () => {
         <TextField fullWidth label="Right Tag" name="rtag" value={formData.rtag} onChange={handleChange} sx={textFieldStyle} />
       </Stack>
       {/* <Typography variant="subtitle1" mt={3}>Upload Images</Typography> */}
-      <ImageUploadPreview uploadedImages={uploadedImages} setUploadedImages={setUploadedImages} />
+      <ImageUploadPreview
+        onImagesChange={setUploadedImages}
+        // Optionally, pass initial images if available:
+        initialImages={
+          formData.image ? formData.image.split(",").filter(Boolean) : []
+        }
+      />
     </Box>
     {/* Submit Button */}
     <Box textAlign="center" mt={4}>

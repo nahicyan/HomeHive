@@ -114,3 +114,16 @@ export const getPropertyOffers = async (propertyId) => {
     handleRequestError(error, "Failed to fetch property offers");
   }
 };
+
+// In your api.js file
+export const createResidencyWithFiles = async (formData) => {
+  try {
+    const response = await api.post('/residency/createWithFile', formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    handleRequestError(error, "Failed to create property with files");
+  }
+};
+

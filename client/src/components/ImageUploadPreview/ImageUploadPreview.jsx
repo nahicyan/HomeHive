@@ -1,111 +1,118 @@
-import React from "react";
-import { Box, Button, Typography, IconButton } from "@mui/material";
-import { UploadFile as UploadFileIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+// ImageUploadPreview.jsx
+import React, { useState, useEffect } from "react";
 
-const ImageUploadPreview = ({ uploadedImages, setUploadedImages }) => {
+const ImageUploadPreview = ({ 
+  existingImages = [], 
+  newImages = [], 
+  onExistingChange, 
+  onNewChange 
+}) => {
+  // Convert existing image paths to full URLs for preview.
+  const fullExistingUrls = existingImages.map(
+    (img) => `${import.meta.env.VITE_SERVER_URL}/${img}`
+  );
+
+  // For new images, create preview URLs from File objects.
+  const [newPreviews, setNewPreviews] = useState([]);
+  useEffect(() => {
+    const previews = newImages.map(file => URL.createObjectURL(file));
+    setNewPreviews(previews);
+
+    // Cleanup the object URLs when newImages change
+    return () => {
+      previews.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [newImages]);
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const newImages = files.map((file) => ({
-      id: URL.createObjectURL(file), // Use URL for preview
-      file,
-    }));
-    setUploadedImages((prev) => [...prev, ...newImages]);
+    // Append new files to existing newImages
+    onNewChange([...newImages, ...files]);
   };
 
-  const handleDelete = (id) => {
-    setUploadedImages((prev) => prev.filter((img) => img.id !== id));
+  const handleDeleteExisting = (index) => {
+    const updated = [...existingImages];
+    updated.splice(index, 1);
+    onExistingChange(updated);
   };
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const reorderedImages = Array.from(uploadedImages);
-    const [removed] = reorderedImages.splice(result.source.index, 1);
-    reorderedImages.splice(result.destination.index, 0, removed);
-    setUploadedImages(reorderedImages);
+  const handleDeleteNew = (index) => {
+    const updated = [...newImages];
+    updated.splice(index, 1);
+    onNewChange(updated);
   };
 
   return (
-    <Box mt={3}>
-      <Typography variant="h6" gutterBottom>
-        Upload Images
-      </Typography>
-      <Button
-        variant="contained"
-        component="label"
-        startIcon={<UploadFileIcon />}
-        sx={{
-          background: "linear-gradient(135deg, #FF8C42, #FF6F00)",
-          color: "#fff",
-          mb: 2,
-        }}
-      >
-        Select Images
-        <input type="file" hidden multiple onChange={handleFileChange} />
-      </Button>
-
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="image-list" direction="horizontal">
-          {(provided) => (
-            <Box
-              display="flex"
-              gap={2}
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              sx={{
-                overflowX: "auto",
-                p: 1,
-                border: "1px solid #ddd",
-                borderRadius: "8px",
+    <div>
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={handleFileChange}
+      />
+      <div style={{ display: "flex", flexWrap: "wrap", marginTop: "10px" }}>
+        {/* Existing images */}
+        {fullExistingUrls.map((src, index) => (
+          <div
+            key={`existing-${index}`}
+            style={{ position: "relative", marginRight: "8px", marginBottom: "8px" }}
+          >
+            <img
+              src={src}
+              alt={`Existing Preview ${index}`}
+              style={{ width: "100px", height: "100px", objectFit: "cover" }}
+            />
+            <button
+              onClick={() => handleDeleteExisting(index)}
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                background: "red",
+                color: "white",
+                border: "none",
+                borderRadius: "50%",
+                width: "20px",
+                height: "20px",
+                cursor: "pointer",
               }}
             >
-              {uploadedImages.map((img, index) => (
-                <Draggable key={img.id} draggableId={img.id} index={index}>
-                  {(provided) => (
-                    <Box
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      sx={{
-                        position: "relative",
-                        width: "150px",
-                        height: "150px",
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      <img
-                        src={img.id}
-                        alt="Uploaded Preview"
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      />
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDelete(img.id)}
-                        sx={{
-                          position: "absolute",
-                          top: 5,
-                          right: 5,
-                          backgroundColor: "rgba(0, 0, 0, 0.5)",
-                          color: "#fff",
-                          "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.7)",
-                          },
-                        }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </Box>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </Box>
+              X
+            </button>
+          </div>
+        ))}
+        {/* New image previews */}
+        {newPreviews.map((src, index) => (
+          <div
+            key={`new-${index}`}
+            style={{ position: "relative", marginRight: "8px", marginBottom: "8px" }}
+          >
+            <img
+              src={src}
+              alt={`New Preview ${index}`}
+              style={{ width: "100px", height: "100px", objectFit: "cover" }}
+            />
+            <button
+              onClick={() => handleDeleteNew(index)}
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                background: "red",
+                color: "white",
+                border: "none",
+                borderRadius: "50%",
+                width: "20px",
+                height: "20px",
+                cursor: "pointer",
+              }}
+            >
+              X
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

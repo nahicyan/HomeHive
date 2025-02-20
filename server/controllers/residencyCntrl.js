@@ -198,17 +198,15 @@ export const getResidency= asyncHandler(async(req,res)=>{
 
 export const updateResidency = asyncHandler(async (req, res) => {
   console.log("Received updateResidency request body:", req.body);
-
   try {
     const { id } = req.params;
-    let { currentUser, userEmail, image, viewCount, ...restOfData } = req.body;
+    let { currentUser, userEmail, imageUrls, viewCount, ...restOfData } = req.body;
 
-    // Remove non-updatable fields
+    // Remove non-updatable fields.
     delete restOfData.id;
     delete restOfData.createdAt;
     delete restOfData.updatedAt;
 
-    // Convert necessary fields to correct types
     if (restOfData.ownerId) restOfData.ownerId = parseInt(restOfData.ownerId, 10);
     if (restOfData.latitude) restOfData.latitude = parseFloat(restOfData.latitude);
     if (restOfData.longitude) restOfData.longitude = parseFloat(restOfData.longitude);
@@ -218,23 +216,39 @@ export const updateResidency = asyncHandler(async (req, res) => {
     if (restOfData.disPrice) restOfData.disPrice = parseFloat(restOfData.disPrice);
     if (restOfData.acre) restOfData.acre = parseFloat(restOfData.acre);
 
-    // ✅ Ensure `image` is stored as a **single string**
-    if (image && Array.isArray(image)) {
-      restOfData.image = image.join(",");
+    // Process the "imageUrls" field (expected as JSON-stringified array)
+    let finalExistingImages = [];
+    if (imageUrls) {
+      try {
+        finalExistingImages = JSON.parse(imageUrls);
+        if (!Array.isArray(finalExistingImages)) {
+          finalExistingImages = [];
+        }
+      } catch (error) {
+        finalExistingImages = [];
+      }
     }
 
-    // Check if userEmail is provided, update relation correctly
+    // Process newly uploaded images (if any) from multer.
+    let newImagePaths = [];
+    if (req.files && req.files.length > 0) {
+      // Use relative path: "uploads/" + file.filename
+      newImagePaths = req.files.map((file) => "uploads/" + file.filename);
+    }
+
+    // Merge existing images with new image paths.
+    const finalImageUrls = [...finalExistingImages, ...newImagePaths];
+
+    // Prepare update data.
     let updateData = {
       ...restOfData,
+      imageUrls: finalImageUrls, // Save as a JSON array in the DB.
     };
 
     if (userEmail) {
-      updateData.owner = {
-        connect: { email: userEmail },
-      };
+      updateData.owner = { connect: { email: userEmail } };
     }
 
-    // Perform update
     const updatedResidency = await prisma.residency.update({
       where: { id },
       data: updateData,
@@ -275,6 +289,9 @@ export const updateResidency = asyncHandler(async (req, res) => {
 
 
 
+
+
+
 export const getResidencyImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -299,12 +316,26 @@ export const getResidencyImages = asyncHandler(async (req, res) => {
 
 
 export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) => {
+  console.log("This is creation request body: ", req.body);
   try {
     // Collect all uploaded file paths
     let imagePaths = [];
     if (req.files && req.files.length > 0) {
       imagePaths = req.files.map((file) => "uploads/" + file.filename);
     }
+
+    // Process existing imageUrls from req.body (if any)
+    let existingImages = [];
+    if (req.body.imageUrls) {
+      try {
+        existingImages = JSON.parse(req.body.imageUrls);
+        if (!Array.isArray(existingImages)) existingImages = [];
+      } catch (err) {
+        existingImages = [];
+      }
+    }
+    // Merge existing images with the new image paths
+    const allImageUrls = [...existingImages, ...imagePaths];
 
     // Destructure the fields from req.body
     const {
@@ -358,7 +389,7 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Create the residency with the array of image paths
+    // Create the residency with the array of image URLs stored in "imageUrls"
     const residency = await prisma.residency.create({
       data: {
         ownerId: parseInt(ownerId),
@@ -387,7 +418,8 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
         landIdLink: landIdLink ?? null,
         sqft: parseInt(sqft),
         acre: acre ? parseFloat(acre) : null,
-        image: imagePaths.length > 0 ? JSON.stringify(imagePaths) : null, // Store as JSON array
+        // Store the combined array directly
+        imageUrls: allImageUrls.length > 0 ? allImageUrls : null,
         disPrice: disPrice ? parseFloat(disPrice) : null,
         financing: financing ?? "Not-Available",
         status: status ?? "Available",
@@ -411,7 +443,9 @@ export const createResidencyWithMultipleFiles = asyncHandler(async (req, res) =>
     });
   } catch (err) {
     console.error("Error creating residency:", err);
-    res.status(500).json({ message: "An error occurred", error: err.message });
+    res
+      .status(500)
+      .json({ message: "An error occurred", error: err.message });
   }
 });
 

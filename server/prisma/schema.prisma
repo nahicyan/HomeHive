@@ -60,7 +60,7 @@ model Residency {
     // Physical Attributes
     sqft                Int
     acre                Float?
-    image               String?
+    imageUrls           Json?
 
     // Pricing and Financing
     askingPrice         Float

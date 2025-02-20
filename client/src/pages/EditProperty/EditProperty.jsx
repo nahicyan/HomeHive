@@ -6,6 +6,7 @@ import { Box, TextField, Typography, Button, Stack } from "@mui/material";
 import { UserContext } from "../../utils/UserContext";
 import ImageUploadPreview from "../../components/ImageUploadPreview/ImageUploadPreview";
 import RichTextEditor from "../../components/RichTextEditor/RichTextEditor";
+import { getProperty } from "@/utils/api";
 
 const serverURL = import.meta.env.VITE_SERVER_URL;
 
@@ -14,6 +15,7 @@ const EditProperty = () => {
   const { propertyId } = useParams();
   const { currentUser } = useContext(UserContext);
 
+  // Update the state key for images from "image" to "imageUrls"
   const [formData, setFormData] = useState({
     ownerId: "",
     userEmail: "",
@@ -41,7 +43,7 @@ const EditProperty = () => {
     landIdLink: "",
     sqft: "",
     acre: "",
-    image: "", // Existing images
+    imageUrls: "", // Now using JSON-based imageUrls
     askingPrice: "",
     minPrice: "",
     disPrice: "",
@@ -56,20 +58,22 @@ const EditProperty = () => {
     rtag: "",
   });
 
-  const [uploadedImages, setUploadedImages] = useState([]); // Newly uploaded images
+  // State for new images (File objects) uploaded during edit.
+  const [newUploadedImages, setNewUploadedImages] = useState([]);
+  // State for existing images (as an array of relative URLs)
+  const [existingImages, setExistingImages] = useState([]);
 
-  // **Load Existing Property Data**
+
+  // **Load Existing Property Data** using API helper getProperty
   useEffect(() => {
     if (propertyId) {
-      axios
-        .get(`${serverURL}/api/residency/${propertyId}`)
-        .then((res) => {
-          const data = res.data;
-
+      getProperty(propertyId)
+        .then((data) => {
           setFormData({
             ...data,
-            image: data.image || "", // Keep existing images
+            imageUrls: data.imageUrls ? data.imageUrls : [],
           });
+          setExistingImages(data.imageUrls ? data.imageUrls : []);
         })
         .catch((err) => {
           console.error("Error fetching property:", err);
@@ -77,6 +81,7 @@ const EditProperty = () => {
         });
     }
   }, [propertyId]);
+  
 
   // **Set User Email from Session**
   useEffect(() => {
@@ -88,25 +93,17 @@ const EditProperty = () => {
   // **Handle Input Changes**
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
     setFormData((prev) => {
       let updated = { ...prev };
-  
-      // Ensure `ownerId` is always an integer
+
       if (name === "ownerId") {
         const parsedValue = parseInt(value, 10);
         updated[name] = isNaN(parsedValue) ? "" : parsedValue;
-      } 
-      
-      // Handle numeric fields (remove commas and format)
-      else if (["sqft", "askingPrice", "minPrice", "disPrice"].includes(name)) {
-        const numericValue = value.replace(/,/g, ""); // Remove commas
+      } else if (["sqft", "askingPrice", "minPrice", "disPrice"].includes(name)) {
+        const numericValue = value.replace(/,/g, "");
         const parsedValue = parseFloat(numericValue);
-  
         if (!isNaN(parsedValue)) {
           updated[name] = parsedValue.toLocaleString("en-US");
-  
-          // Convert sqft to acres dynamically
           if (name === "sqft") {
             updated.acre = (parsedValue / 43560).toLocaleString("en-US", {
               minimumFractionDigits: 2,
@@ -117,88 +114,81 @@ const EditProperty = () => {
           updated[name] = "";
           if (name === "sqft") updated.acre = "";
         }
-      } 
-      
-      // Handle all other fields normally
-      else {
+      } else {
         updated[name] = value;
       }
-  
       return updated;
     });
   };
-  
 
   // **Handle Rich Text Fields**
   const handleTitleChange = (value) => setFormData((prev) => ({ ...prev, title: value }));
   const handleDescriptionChange = (value) => setFormData((prev) => ({ ...prev, description: value }));
   const handleNotesChange = (value) => setFormData((prev) => ({ ...prev, notes: value }));
 
-
-
+  // **Handle Submit**
+  // Handle submit: build FormData and append:
+  // - "imageUrls" as JSON-stringified array of remaining existing images.
+  // - New files under "images".
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
-      const multipartForm = new FormData();
-      const numericFields = ["sqft", "askingPrice", "minPrice", "disPrice", "acre"];
-  
-      console.log("📌 Preparing Form Data for Update:", formData);
-  
-      for (let key in formData) {
-        let value = formData[key];
-        console.log("Separated key-value pair:");
-        console.log(`Key: ${key}:`, value);
-  
-        // Convert `ownerId` to an integer
-        if (key === "ownerId") {
-          value = parseInt(value, 10);
-          if (isNaN(value)) {
-            console.error("❌ Invalid ownerId value:", formData.ownerId);
-            alert("⚠ Owner ID must be a number.");
-            return;
-          }
-        }
-  
-        // Convert numeric fields correctly
-        if (numericFields.includes(key) && typeof value === "string") {
-          value = value.replace(/,/g, "");
-        }
-  
-        // ✅ Ensure the `image` field is a **single string** (stringified JSON)
-        if (key === "image" && typeof value === "string") {
-          try {
-            const existingImages = JSON.parse(value);
-            const imageString = existingImages.length > 0 ? existingImages.join(",") : "";
-            multipartForm.append("image", imageString); // ✅ Append as a single comma-separated string
-          } catch (error) {
-            console.warn("⚠ Error parsing existing images:", error);
-          }
-          continue;
-        }
-  
-        multipartForm.append(key, value);
+    const form = new FormData();
+
+    // Append all fields except imageUrls.
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key !== "imageUrls") {
+        form.append(key, value);
       }
-  
-      // Append newly uploaded images
-      if (uploadedImages.length > 0) {
-        uploadedImages.forEach((image) => multipartForm.append("images", image.file));
-      } else {
-        console.warn("⚠ No new images uploaded.");
-      }
-  
-      console.log("📌 Final FormData Entries:", [...multipartForm.entries()]);
-  
-      // **Send the PUT request**
-      await axios.put(`${serverURL}/api/residency/update/${propertyId}`, multipartForm, {
-        headers: { "Content-Type": "multipart/form-data" },
+    });
+    // Append final list of existing image URLs.
+    form.append("imageUrls", JSON.stringify(existingImages));
+
+    // Append new image files.
+    if (newUploadedImages.length > 0) {
+      newUploadedImages.forEach((file) => {
+        form.append("images", file);
       });
-      console.log("✅ File updated successfully");
-      alert("✅ Update Successful");
-      navigate(`/properties/${propertyId}`); // Redirect to the updated property
-    } catch (error) {
-      console.error("❌ Error updating property:", error);
-      alert("⚠ Failed to update property");
+    }
+
+    try {
+      const response = await axios.put(
+        `${serverURL}/api/residency/update/${propertyId}`,
+        form,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      console.log("Property updated successfully:", response.data);
+      navigate("/properties");
+    } catch (err) {
+      console.error("Error updating property", err);
+      alert("Error updating property");
+    }
+  };
+
+  const getInitialImages = () => {
+    if (!formData.imageUrls) {
+      console.log("No imageUrls found.");
+      return [];
+    }
+    if (typeof formData.imageUrls === "string") {
+      if (formData.imageUrls.trim().startsWith("[")) {
+        try {
+          const parsed = JSON.parse(formData.imageUrls);
+          console.log("Accessible imageUrls:", parsed);
+          return parsed;
+        } catch (err) {
+          console.error("Error parsing imageUrls:", err);
+          return [];
+        }
+      } else {
+        console.error("imageUrls is not valid JSON:", formData.imageUrls);
+        return [];
+      }
+    } else if (Array.isArray(formData.imageUrls)) {
+      console.log("Accessible imageUrls:", formData.imageUrls);
+      return formData.imageUrls;
+    } else {
+      console.error("imageUrls is not in a valid JSON format:", formData.imageUrls);
+      return [];
     }
   };
   
@@ -369,7 +359,12 @@ const EditProperty = () => {
           <TextField fullWidth label="Left Tag" name="ltag" value={formData.ltag} onChange={handleChange} sx={textFieldStyle} />
           <TextField fullWidth label="Right Tag" name="rtag" value={formData.rtag} onChange={handleChange} sx={textFieldStyle} />
         </Stack>
-        <ImageUploadPreview uploadedImages={uploadedImages} setUploadedImages={setUploadedImages} />
+        <ImageUploadPreview
+          existingImages={existingImages}
+          newImages={newUploadedImages}
+          onExistingChange={setExistingImages}
+          onNewChange={setNewUploadedImages}
+        />
       </Box>
       {/* Submit Button */}
       <Box textAlign="center" mt={4}>

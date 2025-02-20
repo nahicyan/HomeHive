@@ -64,11 +64,14 @@ export default function PropertyCarousel({ propertyData }) {
   // Thumbnails container ref (desktop scroll)
   const thumbsRef = useRef(null);
 
-  // Parse JSON images from propertyData
+  // Parse JSON images from propertyData.imageUrls
   useEffect(() => {
-    if (propertyData?.image) {
+    if (propertyData?.imageUrls) {
       try {
-        const parsedImages = JSON.parse(propertyData.image);
+        // If imageUrls is already an array, use it. Otherwise, parse it.
+        let parsedImages = Array.isArray(propertyData.imageUrls)
+          ? propertyData.imageUrls
+          : JSON.parse(propertyData.imageUrls);
         // Convert each image path into a full URL
         const fullUrls = parsedImages.map(
           (img) => `${import.meta.env.VITE_SERVER_URL}/${img}`
@@ -176,40 +179,25 @@ export default function PropertyCarousel({ propertyData }) {
           <div className="lg:w-1/4 relative h-auto lg:h-full flex flex-col">
             {/* Up Arrow (desktop only) */}
             <Button
-                variant="ghost"
-                className="
-                hidden lg:flex
-                absolute top-2 left-1/2 -translate-x-1/2
-                z-10 bg-[#FDF8F2]
-                "
-                onClick={scrollUp}
+              variant="ghost"
+              className="hidden lg:flex absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-[#FDF8F2]"
+              onClick={scrollUp}
             >
-          <ChevronUpIcon className="w-5 h-5" />
-        </Button>
+              <ChevronUpIcon className="w-5 h-5" />
+            </Button>
 
             {/* Thumbs Container (shows 3 images, no scrollbar) */}
             <div
               ref={thumbsRef}
-              className="
-                flex lg:flex-col gap-2
-                no-scrollbar
-                overflow-y-auto
-                h-full
-                pb-2
-              "
+              className="flex lg:flex-col gap-2 no-scrollbar overflow-y-auto h-full pb-2"
             >
               {images.map((src, index) => (
                 <div
                   key={src}
                   className={`
                     cursor-pointer w-24 h-16 lg:w-full lg:h-[30%] flex-none
-                    rounded border-2
-                    hover:scale-105 transition-transform
-                    ${
-                      index === currentIndex
-                        ? "border-blue-500"
-                        : "border-transparent"
-                    }
+                    rounded border-2 hover:scale-105 transition-transform
+                    ${index === currentIndex ? "border-blue-500" : "border-transparent"}
                   `}
                   onClick={() => goToImage(index)}
                 >
@@ -224,17 +212,12 @@ export default function PropertyCarousel({ propertyData }) {
 
             {/* Down Arrow (desktop only) */}
             <Button
-                variant="ghost"
-                  className="
-                  hidden lg:flex
-                  absolute bottom-2 left-1/2 -translate-x-1/2
-                 z-10 bg-[#FDF8F2]
-                "
-                  onClick={scrollDown}
+              variant="ghost"
+              className="hidden lg:flex absolute bottom-2 left-1/2 -translate-x-1/2 z-10 bg-[#FDF8F2]"
+              onClick={scrollDown}
             >
-             <ChevronDownIcon className="w-5 h-5" />
+              <ChevronDownIcon className="w-5 h-5" />
             </Button>
-
           </div>
         </CardContent>
 
