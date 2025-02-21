@@ -304,7 +304,7 @@ const AddProperty = () => {
         <TextField fullWidth label="Right Tag" name="rtag" value={formData.rtag} onChange={handleChange} sx={textFieldStyle} />
       </Stack>
       <ImageUploadPreview
-        existingImages={[]}               // No pre-existing images when adding a property.
+        existingImages={[]}                // No pre-existing images when adding a property.
         newImages={uploadedImages}         // New images stored in state.
         onExistingChange={() => {}}        // No-op since there are no existing images.
         onNewChange={setUploadedImages}    // Update new images state.
@@ -312,7 +312,7 @@ const AddProperty = () => {
     </Box>
     {/* Submit Button */}
     <Box textAlign="center" mt={4}>
-      <Button type="submit" variant="contained" sx={submitButtonStyle}>Submit</Button>
+      <Button type="submit" variant="contained" sx={submitButtonStyle}> Submit </Button>
     </Box>
   </Box>);
   
