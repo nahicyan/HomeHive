@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { textFieldStyle, sectionStyle, sectionTitleStyle, submitButtonStyle, FormControlWithSelect } from "../formStyles";
 import { Box, TextField, Typography, Button, Stack } from "@mui/material";
-import { UserContext } from "../../utils/UserContext";
+import { UserDetailContext } from "../../utils/UserContext";
 import ImageUploadPreview from "../../components/ImageUploadPreview/ImageUploadPreview";
 import RichTextEditor from "../../components/RichTextEditor/RichTextEditor";
 import { getProperty } from "@/utils/api";
@@ -13,7 +13,7 @@ const serverURL = import.meta.env.VITE_SERVER_URL;
 const EditProperty = () => {
   const navigate = useNavigate();
   const { propertyId } = useParams();
-  const { currentUser } = useContext(UserContext);
+  const { userDetails } = useContext(UserDetailContext);
 
   // Update the state key for images from "image" to "imageUrls"
   const [formData, setFormData] = useState({
@@ -85,10 +85,10 @@ const EditProperty = () => {
 
   // **Set User Email from Session**
   useEffect(() => {
-    if (currentUser?.email) {
-      setFormData((prev) => ({ ...prev, userEmail: currentUser.email }));
+    if (userDetails?.email) {
+      setFormData((prev) => ({ ...prev, userEmail: userDetails.email }));
     }
-  }, [currentUser]);
+  }, [userDetails]);
 
   // **Handle Input Changes**
   const handleChange = (e) => {
@@ -219,9 +219,9 @@ const EditProperty = () => {
       <Box sx={{ background: "#f0f0f0", p: 2, borderRadius: "12px", border: "1px solid rgba(200,200,200,0.6)" }}>
         <Typography variant="body1" sx={{ fontWeight: 600, color: "#333" }}>
           You are editing as:{" "}
-          {currentUser ? (
+          {userDetails ? (
             <Typography component="span" sx={{ fontWeight: 700, color: "#000" }}>
-              {currentUser.email}
+              {userDetails.email}
             </Typography>
           ) : (
             <Typography component="span" sx={{ color: "red" }}>

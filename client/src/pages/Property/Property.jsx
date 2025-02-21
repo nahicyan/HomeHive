@@ -3,7 +3,6 @@ import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { getProperty } from "../../utils/api";
-import { UserContext } from "../../utils/UserContext";
 import PropertyDetails from "../../components/PropertyDetails/PropertyDetails";
 import PropertyCarousel from "../../components/PropertyCarousel/PropertyCarousel";
 import PropertyHeaderLeft from "../../components/PropertyHeaderLeft/PropertyHeaderLeft";
@@ -14,7 +13,6 @@ const Property = () => {
   const leftSectionRef = useRef(null);
   const rightSectionRef = useRef(null);
   const [propertyData, setPropertyData] = useState(null);
-  const { currentUser } = useContext(UserContext);
 
   // Extract property ID from the URL
   const propertyId = pathname.split("/").slice(-1)[0];

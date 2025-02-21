@@ -13,7 +13,7 @@ export const Site = () => {
         <div className="white-gradient" />
         <Hero />
       </div>
-      <Lands />
+      {/* <Lands /> */}
       <Why />
       <Contact />
       <GetStarted />

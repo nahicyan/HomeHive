@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {textFieldStyle, sectionStyle, sectionTitleStyle, submitButtonStyle, FormControlWithSelect} from "../formStyles";
 import { Box, TextField, Typography, FormControl, Button, Stack, Select, InputLabel, MenuItem } from "@mui/material";
 import { useContext } from "react"; // New import
-import { UserContext } from "../../utils/UserContext"; // New import for UserContext
+import { UserDetailContext } from "../../utils/UserContext"; // New import for UserContext
 import ImageUploadPreview from "../../components/ImageUploadPreview/ImageUploadPreview"; // Import the ImageUploadPreview componen
 import RichTextEditor from "../../components/RichTextEditor/RichTextEditor";
 import { createResidencyWithFiles } from "@/utils/api";
@@ -13,7 +13,7 @@ const serverURL = import.meta.env.VITE_SERVER_URL;
 
 const AddProperty = () => {
   const navigate = useNavigate();
-  const { currentUser } = useContext(UserContext);
+  const { userDetails } = useContext(UserDetailContext);
 
   const [formData, setFormData] = useState({
     ownerId: "",
@@ -58,13 +58,13 @@ const AddProperty = () => {
   });
 
   useEffect(() => {
-    if (currentUser?.email) {
+    if (userDetails?.email) {
       setFormData((prev) => ({
         ...prev,
-        userEmail: currentUser.email,
+        userEmail: userDetails.email,
       }));
     }
-  }, [currentUser]);
+  }, [userDetails]);
 
  
   const [uploadedImages, setUploadedImages] = useState([]);
@@ -166,7 +166,7 @@ const AddProperty = () => {
     <Box sx={{background:"#f0f0f0",padding:2,borderRadius:"12px",border:"1px solid rgba(200,200,200,0.6)"}}>
       <Typography variant="body1" sx={{fontWeight:600,color:"#333"}}>
           You are uploading as:{" "}
-        {currentUser ? (<Typography component="span" sx={{fontWeight:700,color:"#000"}}>{currentUser.email}</Typography>) : (<Typography component="span" sx={{color:"red"}}>Not logged in</Typography>)}
+        {userDetails ? (<Typography component="span" sx={{fontWeight:700,color:"#000"}}>{userDetails.email}</Typography>) : (<Typography component="span" sx={{color:"red"}}>Not logged in</Typography>)}
      </Typography>
     </Box>
     {/* System Information */}

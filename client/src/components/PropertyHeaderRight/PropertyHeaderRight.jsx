@@ -6,7 +6,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { UserContext } from "../../utils/UserContext"; // Import user context
+import { UserDetailContext } from "@/utils/UserContext";
 
 // Function to assign status colors
 function getStatusClasses(status) {
@@ -26,7 +26,7 @@ function getStatusClasses(status) {
 }
 
 export default function PropertyHeaderRight({ propertyData }) {
-  const { currentUser } = useContext(UserContext); // Check if user is logged in
+  const { userDetails } = useContext(UserDetailContext); // Get user details from the new context
   const { status, disPrice, askingPrice, acre } = propertyData || {};
   const { circle, text } = getStatusClasses(status);
 
@@ -38,15 +38,13 @@ export default function PropertyHeaderRight({ propertyData }) {
           <div className="flex items-center gap-3 flex-wrap">
             {/* Status Indicator */}
             <div className="flex items-center gap-2">
-              <span
-                className={`w-2 h-2 rounded-full animate-pulse-slow ${circle}`}
-              />
+              <span className={`w-2 h-2 rounded-full animate-pulse-slow ${circle}`} />
               <CardDescription className={`text-lg capitalize ${text}`}>
                 {status || "Unknown Status"}
               </CardDescription>
 
-              {/* If logged in and there is a discount, show crossed-out askingPrice here */}
-              {currentUser && disPrice && (
+              {/* If logged in and there is a discount, show crossed-out askingPrice */}
+              {userDetails && disPrice && (
                 <span className="text-gray-500 line-through text-xl">
                   ${askingPrice?.toLocaleString()}
                 </span>
@@ -54,19 +52,19 @@ export default function PropertyHeaderRight({ propertyData }) {
             </div>
 
             {/* Discount Price & Login Button (Only show if NOT logged in) */}
-            {!currentUser && disPrice && (
-              <div className="relative flex items-center  mx-2">
+            {!userDetails && disPrice && (
+              <div className="relative flex items-center mx-2">
                 {/* Ghost Button positioned directly on top of the blurred price */}
                 <button
                   variant="ghost"
                   className="
-        absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-        text-base z-10 bg-transparent text-gray-1000 font-semibold
-        hover:px-2 hover:py-1 rounded-md 
-        hover:bg-gray-200 transition-colors
-        cursor-pointer 
-        whitespace-nowrap tracking-tight
-      "
+                    absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                    text-base z-10 bg-transparent text-gray-1000 font-semibold
+                    hover:px-2 hover:py-1 rounded-md 
+                    hover:bg-gray-200 transition-colors
+                    cursor-pointer 
+                    whitespace-nowrap tracking-tight
+                  "
                   onClick={() => {
                     // Handle login modal or redirect
                   }}
@@ -84,8 +82,8 @@ export default function PropertyHeaderRight({ propertyData }) {
 
           {/* === Main Price & Acres (With Strike-Through Logic) === */}
           <CardTitle className="text-2xl text-gray-800 font-bold">
-            {/* If user is logged in, show askingPrice as crossed-out & replace it with disPrice */}
-            {currentUser && disPrice ? (
+            {/* If user is logged in, show discount price; otherwise, show askingPrice */}
+            {userDetails && disPrice ? (
               <>
                 <span className="ml-2 text-2xl font-semibold text-gray-800">
                   ${disPrice?.toLocaleString()}
@@ -94,7 +92,7 @@ export default function PropertyHeaderRight({ propertyData }) {
             ) : (
               <>${askingPrice?.toLocaleString()}</>
             )}
-            <span className="ml-2 text-2x1 font-normal text-gray-700  ml-6">
+            <span className="ml-6 text-2xl font-normal text-gray-700">
               {acre} Acres
             </span>
           </CardTitle>
@@ -105,36 +103,36 @@ export default function PropertyHeaderRight({ propertyData }) {
       <div className="flex items-center gap-3 px-4 py-2">
         <Button
           className="
-      bg-[#324c48]
-      text-white
-      w-32
-      py-2
-      text-base
-      font-semibold
-      uppercase
-      rounded-full
-      shadow-md
-      hover:shadow-lg
-      transition-shadow
-    "
+            bg-[#324c48]
+            text-white
+            w-32
+            py-2
+            text-base
+            font-semibold
+            uppercase
+            rounded-full
+            shadow-md
+            hover:shadow-lg
+            transition-shadow
+          "
         >
           Call
         </Button>
 
         <Button
           className="
-      bg-[#324c48]
-      text-white
-      w-32
-      py-2
-      text-base
-      font-semibold
-      uppercase
-      rounded-full
-      shadow-md
-      hover:shadow-lg
-      transition-shadow
-    "
+            bg-[#324c48]
+            text-white
+            w-32
+            py-2
+            text-base
+            font-semibold
+            uppercase
+            rounded-full
+            shadow-md
+            hover:shadow-lg
+            transition-shadow
+          "
         >
           Message
         </Button>

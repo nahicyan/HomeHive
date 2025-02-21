@@ -1,22 +1,28 @@
-// UserContext.js
-import React, { createContext, useState, useMemo } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
-// This context holds user state and a setter function
-export const UserContext = createContext(null);
+// Create the context
+export const UserDetailContext = createContext(null);
 
-// The provider wraps the entire app
-export const UserProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+// Create the provider
+export const UserDetailProvider = ({ children }) => {
+  const [userDetails, setUserDetails] = useState(() => {
+    // Optional: load from localStorage on init
+    const saved = localStorage.getItem("userDetails");
+    return saved ? JSON.parse(saved) : null;
+  });
 
-  // Memoize the context value (optional optimization)
-  const value = useMemo(
-    () => ({ currentUser, setCurrentUser }),
-    [currentUser]
-  );
+  useEffect(() => {
+    // Whenever userDetails changes, optionally persist to localStorage
+    if (userDetails) {
+      localStorage.setItem("userDetails", JSON.stringify(userDetails));
+    } else {
+      localStorage.removeItem("userDetails");
+    }
+  }, [userDetails]);
 
   return (
-    <UserContext.Provider value={value}>
+    <UserDetailContext.Provider value={{ userDetails, setUserDetails }}>
       {children}
-    </UserContext.Provider>
+    </UserDetailContext.Provider>
   );
 };

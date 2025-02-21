@@ -10,7 +10,6 @@ import "./config/passportConfig.js"; // Import your passport configuration
 import { userRoute } from "./routes/userRoute.js";
 import { residencyRoute } from "./routes/residencyRoute.js";
 import { buyerRoute } from "./routes/buyerRoute.js";
-import { sessionLogger, ensureAuthenticated } from "./middlewares/sessionMiddleware.js";
 
 const app = express();
 const PORT = process.env.PORT || 8400;
@@ -59,9 +58,6 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 4) Middleware for logging session and request information
-app.use(sessionLogger);
-
 // 5) Serve static "uploads" folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -89,12 +85,6 @@ app.get("/auth/logout", (req, res) => {
     }
     res.status(200).json({ message: "Logout successful" }); // Send JSON response
   });
-});
-
-// 8) Test session endpoint (with authentication check)
-app.get("/auth/test-session", ensureAuthenticated, (req, res) => {
-  console.log("Session user:", req.user);
-  res.json({ message: "Session active", user: req.user });
 });
 
 // 9) Start the server
