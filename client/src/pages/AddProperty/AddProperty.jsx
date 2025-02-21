@@ -303,13 +303,11 @@ const AddProperty = () => {
         <TextField fullWidth label="Left Tag" name="ltag" value={formData.ltag} onChange={handleChange} sx={textFieldStyle} />
         <TextField fullWidth label="Right Tag" name="rtag" value={formData.rtag} onChange={handleChange} sx={textFieldStyle} />
       </Stack>
-      {/* <Typography variant="subtitle1" mt={3}>Upload Images</Typography> */}
       <ImageUploadPreview
-        onImagesChange={setUploadedImages}
-        // Optionally, pass initial images if available:
-        initialImages={
-          formData.image ? formData.image.split(",").filter(Boolean) : []
-        }
+        existingImages={[]}               // No pre-existing images when adding a property.
+        newImages={uploadedImages}         // New images stored in state.
+        onExistingChange={() => {}}        // No-op since there are no existing images.
+        onNewChange={setUploadedImages}    // Update new images state.
       />
     </Box>
     {/* Submit Button */}
